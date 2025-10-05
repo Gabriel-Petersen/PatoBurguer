@@ -1,4 +1,3 @@
-
 #ifndef HAMBURGUERES_H
 #define HAMBURGUERES_H
 #include "../estruturas_de_dados/pilha.h"
