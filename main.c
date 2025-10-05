@@ -6,6 +6,7 @@
 #include <locale.h>
 
 // Sorteia qtd pedidos do cardápio e, após todos os sorteios, mostra na tela os pedidos para memorização do jogador
+
 void inicio_de_dia (int qtd, Cardapio* c)
 {
     Fila_E q;
