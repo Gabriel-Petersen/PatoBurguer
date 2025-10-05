@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.dbclient-js": "javascript",
+        ".fantomasignore": "ignore",
+        "piskel_molhos.h": "c",
+        "piskel_ingredientes.h": "c",
+        "pilha.h": "c"
+    }
+}
