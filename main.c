@@ -1,16 +1,24 @@
 #define USE_SHORTCUTS
 #include "montagem.h"
 #include "assets/logo.h"
+#include "jogador.h"
 #include <time.h>
 #include <windows.h>
 #include <locale.h>
 
 // Sorteia qtd pedidos do cardápio e, após todos os sorteios, mostra na tela os pedidos para memorização do jogador
 
-void inicio_de_dia (int qtd, Cardapio* c)
+int qtd_clientes (int qtd_dias)
+{
+    // sla fórmula aleatória
+    return (int)log2(qtd_dias)*(qtd_dias+2);
+}
+
+void inicio_de_dia (Jogador* jog, Cardapio* c)
 {
     Fila_E q;
     inicializa_fila(&q);
+    int qtd = qtd_clientes(jog->dia_atual);
 
     printf("Os clientes estão chegando e fazendo seus pedidos...\n");
     print_rgb_txt(COLOR_VERMELHO, VETOR_BAIXO, "Aguarde os clientes decidirem e a chapa aquecer\n");
@@ -44,11 +52,11 @@ void inicio_de_dia (int qtd, Cardapio* c)
         tempo -= 0.1;
     }
     system("cls");
-    // A LINHA ABAIXO ATIVA A ETAPA DE MONTAGEM MERAMENTE VISUAL (mais detalhes em montagem.h)
-    // etapa_de_montagem(&q, c);
+
+    etapa_de_montagem(&q, c);
 }
 
-int main ()
+void tela_inicial ()
 {
     setlocale(LC_CTYPE, "pt_BR.UTF-8");
     Screen* tela_inicio = criar_tela(nv2(120, 30), COLOR_CIANO, 10);
@@ -65,9 +73,16 @@ int main ()
     fundo = NULL;
     excluir_tela(tela_inicio);
     tela_inicio = NULL;
+}
 
+int main ()
+{
     Cardapio cardapio;
+    // INICIALIZANDO SEM VERIFICAR ARQUIVO
+    Jogador* jog = inicializa_jogador(NULL);
     inicializa_cardapio(&cardapio);
     inicio_de_dia(5, &cardapio);
+
+    jog = destruir_jogador(jog);
     return 0;
 }
