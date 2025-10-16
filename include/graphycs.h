@@ -29,9 +29,9 @@
  * @note Nem todo terminal suporta o padrão RGB. Requer teste
  */
 typedef struct {
-    int r; /**< Componente vermelho (0-255). */
-    int g; /**< Componente verde (0-255). */
-    int b; /**< Componente azul (0-255). */
+    uint8_t r; /**< Componente vermelho (0-255). */
+    uint8_t g; /**< Componente verde (0-255). */
+    uint8_t b; /**< Componente azul (0-255). */
 } Color;
 
 /**
@@ -803,8 +803,8 @@ void print_rgb_txt(Color cor_do_texto, Vector2 pos, const char *format, ...);
 #ifdef USE_SHORTCUTS
 #define nv2(x, y) new_Vector2(x, y)
 #define v_prod(v, x) produto_vetor_escalar(v, x)
-#define Obj Objeto*
-#define Complexo ObjetoComplexo*
+typedef Objeto* Obj;
+typedef ObjetoComplexo* Complexo;
 #define mov_obj(s, o, v) mover_objeto(s, o, v)
 #endif // USE_SHORTCUTS
 

@@ -1,6 +1,8 @@
 #ifndef INGREDIENTES_H
 #define INGREDIENTES_H
 
+#define QTD_INGREDIENTES 12 // desconsidera a parte debaixo do pão - não é um ítem vendível e já começa em cima da tábua de montagem
+
 typedef struct{
     char nome[20];
     int id;
