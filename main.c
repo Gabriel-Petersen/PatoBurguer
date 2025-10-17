@@ -1,7 +1,6 @@
 #define USE_SHORTCUTS
 #include "montagem.h"
 #include "assets/logo.h"
-#include "jogador.h"
 #include <time.h>
 #include <windows.h>
 #include <locale.h>
@@ -11,7 +10,7 @@
 int qtd_clientes (int qtd_dias)
 {
     // sla fórmula aleatória
-    return qtd_dias + 2;
+    return qtd_dias + 3;
 }
 
 void inicio_de_dia (Jogador* jog, Cardapio* c)
@@ -21,7 +20,7 @@ void inicio_de_dia (Jogador* jog, Cardapio* c)
 
     printf("Os clientes estão chegando e fazendo seus pedidos...\n");
     print_rgb_txt(COLOR_VERMELHO, VETOR_BAIXO, "Aguarde os clientes decidirem e a chapa aquecer\n");
-    Sleep(500);
+    Sleep(1500);
     system("cls");
     print_rgb_txt(COLOR_VERDE, VETOR_NULO, "Os pedidos já foram escolhidos!\nPrepare sua memória, pois só serão mostrados uma vez!\n");
     printf("Digite qualquer coisa quando estiver pronto!");
@@ -39,7 +38,7 @@ void inicio_de_dia (Jogador* jog, Cardapio* c)
         printf("%d - %s\n", i+1, c->hamburgueres[b]->nome);
     }
 
-    float tempo = 1.5*qtd;
+    float tempo = 2*qtd;
     while (tempo > 0)
     {
         print_rgb_txt(COLOR_VERMELHO, VETOR_NULO, "Você tem %.1f segundos!", tempo);
@@ -48,7 +47,7 @@ void inicio_de_dia (Jogador* jog, Cardapio* c)
     }
     system("cls");
 
-    etapa_de_montagem(q, c);
+    etapa_de_montagem(q, c, jog);
     destruir_fila(q);
     q = NULL;
 }

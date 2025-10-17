@@ -14,7 +14,7 @@ Jogador* criar_novo_save ()
 {
     Jogador* j = (Jogador*)malloc(sizeof(Jogador));
     j->dinheiro = DINHEIRO_INICIAL;
-    j->dia_atual = 0;
+    j->dia_atual = 1;
 
     // Pode pedir para ele digitar o nome dele ou sla
 
