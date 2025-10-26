@@ -4,18 +4,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "INGREDIENTES_H"
+#include "../itens/ingredientes.h"
 
 typedef Ingrediente tp_item_lista_DE;
 
 void custom_print(tp_item_lista_DE x)
 {
-	printf("%d ", x);
+	printf("%s ", x.nome);
 }
 
 bool custom_comp (tp_item_lista_DE a, tp_item_lista_DE b)
 {
-	return a==b;
+	return a.id==b.id;
 }
 
 typedef struct Nodo {
@@ -80,7 +80,7 @@ bool remover (Lista_DE* l, tp_item_lista_DE x)
 	if (lista_vazia(l)) return false;
 	
 	Nodo* atual = l->ini;
-	while (atual != NULL && atual->info != x) atual = atual->prox;
+	while (atual != NULL && !custom_comp(atual->info,x)) atual = atual->prox;
 	if (atual == NULL) return false;
 	
 	if (l->tam == 1)
@@ -114,7 +114,7 @@ Nodo* buscar_item (Lista_DE* l, tp_item_lista_DE x)
 {
 	if (lista_vazia(l)) return NULL;
 	Nodo* atual = l->ini;
-	while (atual != NULL && atual->info != x) atual = atual->prox;
+	while (atual != NULL && !custom_comp(atual->info,x)) atual = atual->prox;
 	return atual;
 }
 
