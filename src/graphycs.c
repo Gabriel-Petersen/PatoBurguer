@@ -149,6 +149,15 @@ Color aplicar_filtro (Color original, Color filtro)
     );
 }
 
+Color somar_cor (Color original, Color soma)
+{
+    return criar_cor (
+        min (255, original.r + soma.r),
+        min (255, original.g + soma.g),
+        min (255, original.b + soma.b)
+    );
+}
+
 Vector2 new_Vector2 (int x, int y)
 {
     return (Vector2){x, y};
@@ -823,6 +832,12 @@ void aplicar_filtro_obj(Objeto *obj, Color filtro)
         obj->info[i].cor = aplicar_filtro(obj->info[i].cor, filtro);
 }
 
+void somar_cor_obj(Objeto* obj, Color soma)
+{
+    for (int i  =0; i < obj->qtd_pixel; i++)
+        obj->info[i].cor = somar_cor(obj->info[i].cor, soma);
+}
+
 void espelhar_objeto(Screen *s, Objeto *obj, bool horizontalmente)
 {
     bool redesenhar = false;
@@ -993,6 +1008,7 @@ void print_rgb_txt(Color cor_do_texto, Vector2 pos, const char *format, ...)
     vprintf(format, args);
     va_end(args);
     printf("\033[0m");
+    printf("\033[?25l");
 }
 
 void printPixel(Pixel_Stack* p, int limiar_de_cor, Color cor_anterior)
@@ -1102,6 +1118,14 @@ void rotacionar_objeto_complexo (Screen* s, ObjetoComplexo* obj, Vector2 pivot, 
 void moveCursor(Vector2 v)
 {
     printf("\033[%d;%dH", v.y + 1, v.x + 1);
+}
+
+void limpar_buffer(Screen* s) 
+{
+    for (int i = 0; i < s->screen_size.y; i++) for (int j = 0; j < s->screen_size.x; j++) 
+    {
+            s->buffer[i][j] = COR_NULA;
+    }
 }
 
 void render(Screen* s, bool reset) 

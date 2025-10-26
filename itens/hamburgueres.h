@@ -62,7 +62,7 @@ Hamburguer* criar_quackteirao(int i)
 {
     Hamburguer* quackteirao = (Hamburguer*)malloc(sizeof(Hamburguer));
     
-    strcpy(quackteirao->nome,"Quackteirão");
+    strcpy(quackteirao->nome,"Quackteirao");
     quackteirao->id=i;
     
     inicializa_pilha(&(quackteirao->receita));
@@ -100,7 +100,7 @@ Hamburguer* criar_duck_n_break(int i)
 {
     Hamburguer* duck_n_break = (Hamburguer*)malloc(sizeof(Hamburguer));
     
-	strcpy(duck_n_break->nome,"Duck && Break");
+	strcpy(duck_n_break->nome,"Duck n Break");
     duck_n_break->id=i;
     
     inicializa_pilha(&(duck_n_break->receita));
@@ -163,7 +163,7 @@ Hamburguer* criar_if_duck_else(int i)
 {
     Hamburguer* if_duck_else = (Hamburguer*)malloc(sizeof(Hamburguer));
     
-    strcpy(if_duck_else->nome,"if (Duck) else");
+    strcpy(if_duck_else->nome,"if Duck else");
     if_duck_else->id=i;
     
     inicializa_pilha(&(if_duck_else->receita));
@@ -182,7 +182,7 @@ Hamburguer* criar_while_quack(int i)
 {
     Hamburguer* while_quack = (Hamburguer*)malloc(sizeof(Hamburguer));
     
-    strcpy(while_quack->nome,"while (Quack)");
+    strcpy(while_quack->nome,"while Quack");
     while_quack->id=i;
 
     inicializa_pilha(&(while_quack->receita));
@@ -201,18 +201,18 @@ Hamburguer* criar_quack_end(int i)
 {
     Hamburguer* quack_end = (Hamburguer*)malloc(sizeof(Hamburguer));
     
-    strcpy(quack_end->nome,"Quack<<endl");
+    strcpy(quack_end->nome,"Quack endl");
     quack_end->id=i;
 
 	inicializa_pilha(&(quack_end->receita));
-    push(&(quack_end->receita), PAO_CIMA);
+    push(&(quack_end->receita), PAO_BAIXO);
     push(&(quack_end->receita), MAIONESE_TEMPERADA);
     push(&(quack_end->receita), CARNE);
     push(&(quack_end->receita), PICLES);
     push(&(quack_end->receita), TOMATE);
     push(&(quack_end->receita), ALFACE);
     push(&(quack_end->receita), QUEIJO);
-    push(&(quack_end->receita), PAO_BAIXO);
+    push(&(quack_end->receita), PAO_CIMA);
 
     return quack_end;
 }

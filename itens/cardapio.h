@@ -10,7 +10,25 @@
 */
 typedef struct {
     Hamburguer* hamburgueres[10];
+    Ingrediente ingredientes[QTD_INGREDIENTES];
 } Cardapio;
+
+void referencia_ingredientes(Cardapio* c)
+{
+    c->ingredientes[0] = PAO_CIMA;
+    c->ingredientes[1] = PAO_BAIXO;
+    c->ingredientes[2] = CARNE;
+    c->ingredientes[3] = BACON;
+    c->ingredientes[4] = QUEIJO;
+    c->ingredientes[5] = ALFACE;
+    c->ingredientes[6] = TOMATE;
+    c->ingredientes[7] = MAIONESE_TEMPERADA;
+    c->ingredientes[8] = BARBERCUE;
+    c->ingredientes[9] = CEBOLA_CARAMELIZADA;
+    c->ingredientes[10] = PICLES;
+    c->ingredientes[11] = OVO_FRITO;
+    c->ingredientes[12] = ONION_RINGS;
+}
 
 // Aloca cada hambúrguer com alocação dinâmica para evitar uma área enorme de memória colada com vários hambúrgueres, cada um com sua pilha
 void inicializa_cardapio (Cardapio* c)
@@ -54,6 +72,7 @@ void inicializa_cardapio (Cardapio* c)
         c->hamburgueres[i] = ptr;
         c->hamburgueres[i]->valor = calcula_valor(c->hamburgueres[i]->receita);
     }
+    referencia_ingredientes(c);
 }
 
 void libera_cardapio (Cardapio* c)

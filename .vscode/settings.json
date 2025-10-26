@@ -4,6 +4,12 @@
         ".fantomasignore": "ignore",
         "piskel_molhos.h": "c",
         "piskel_ingredientes.h": "c",
-        "pilha.h": "c"
+        "pilha.h": "c",
+        "montagembackground.h": "c",
+        "graphycs_all.h": "c",
+        "cardapio.h": "c",
+        "graphycs.h": "c",
+        "graphycstxt.h": "c",
+        "hamburgueres.h": "c"
     }
 }
