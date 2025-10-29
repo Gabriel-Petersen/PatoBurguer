@@ -6,7 +6,12 @@
 #include <stdbool.h>
 #include "../itens/ingredientes.h"
 
-typedef Ingrediente tp_item_lista_DE;
+typedef struct {
+Ingrediente ing;
+Objeto* obj;
+}ItemDaLista;
+
+typedef ItemDaLista tp_item_lista_DE;
 
 void custom_print(tp_item_lista_DE x)
 {
@@ -15,7 +20,7 @@ void custom_print(tp_item_lista_DE x)
 
 bool custom_comp (tp_item_lista_DE a, tp_item_lista_DE b)
 {
-	return a.id==b.id;
+	return a->ing.id==b->ing.id;
 }
 
 typedef struct Nodo {
@@ -136,7 +141,7 @@ void imprime_lista(Lista_DE* l)
     Nodo* atual = l->ini;
     while (atual != NULL)
     {
-        custom_print(atual->info);
+        custom_print(atual->ing->info);
         atual = atual->prox;
     }
     printf("\n");

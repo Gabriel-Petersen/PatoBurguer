@@ -7,20 +7,20 @@ typedef struct{
     char nome[20];
     int id;
     float valor;
-} Ingrediente;
+}Ingrediente;
 
-#define PAO_CIMA (Ingrediente) {"pao_cima", 0, 2}
-#define PAO_BAIXO (Ingrediente) {"pao_baixo", 1, 2}
-#define CARNE (Ingrediente) {"carne", 2, 10}
-#define BACON (Ingrediente) {"bacon", 3, 8.4}
-#define QUEIJO (Ingrediente) {"queijo", 4, 5.5}
-#define ALFACE (Ingrediente) {"alface", 5, 3.2}
-#define TOMATE (Ingrediente) {"tomate", 6, 2.8}
-#define MAIONESE_TEMPERADA (Ingrediente) {"maionese_temperada", 7, 4}
-#define BARBERCUE (Ingrediente) {"barbercue", 8, 4}
-#define CEBOLA_CARAMELIZADA (Ingrediente) {"cebola_caramelizada", 9, 5.2}
-#define PICLES (Ingrediente) {"picles",10, 1.9}
-#define OVO_FRITO (Ingrediente) {"ovo_frito", 11, 3}
-#define ONION_RINGS (Ingrediente) {"onion_rings", 12, 4.1}
+#define PAO_CIMA (Ingrediente) {"Topo do pão", 0, 2}
+#define PAO_BAIXO (Ingrediente) {"Base do pão", 1, 2}
+#define CARNE (Ingrediente) {"Carne", 2, 10}
+#define BACON (Ingrediente) {"Bacon", 3, 8.4}
+#define QUEIJO (Ingrediente) {"Queijo", 4, 5.5}
+#define ALFACE (Ingrediente) {"Alface", 5, 3.2}
+#define TOMATE (Ingrediente) {"Tomate", 6, 2.8}
+#define MAIONESE_TEMPERADA (Ingrediente) {"Maionese Temperada", 7, 4}
+#define BARBERCUE (Ingrediente) {"Barbercue", 8, 4}
+#define CEBOLA_CARAMELIZADA (Ingrediente) {"Cebola", 9, 5.2}
+#define PICLES (Ingrediente) {"Picles",10, 1.9}
+#define OVO_FRITO (Ingrediente) {"Ovo Frito", 11, 3}
+#define ONION_RINGS (Ingrediente) {"Onion Rings", 12, 4.1}
 
 #endif
