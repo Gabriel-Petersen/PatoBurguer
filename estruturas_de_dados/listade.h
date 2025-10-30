@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include "../itens/ingredientes.h"
+#include "../include/graphycs_all.h"
 
 typedef struct {
 Ingrediente ing;
@@ -15,12 +16,12 @@ typedef ItemDaLista tp_item_lista_DE;
 
 void custom_print(tp_item_lista_DE x)
 {
-	printf("%s ", x.nome);
+	printf("%s ", x.ing.nome);
 }
 
 bool custom_comp (tp_item_lista_DE a, tp_item_lista_DE b)
 {
-	return a->ing.id==b->ing.id;
+	return a.ing.id==b.ing.id;
 }
 
 typedef struct Nodo {
@@ -141,7 +142,7 @@ void imprime_lista(Lista_DE* l)
     Nodo* atual = l->ini;
     while (atual != NULL)
     {
-        custom_print(atual->ing->info);
+        custom_print(atual->info);
         atual = atual->prox;
     }
     printf("\n");
