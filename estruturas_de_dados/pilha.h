@@ -2,7 +2,7 @@
 #define PILHA_H
 #include "../itens/ingredientes.h"
 #include <stdbool.h>
-
+#include <stdlib.h>
 #define MAX 16
 
 typedef Ingrediente tp_item;
