@@ -264,6 +264,8 @@ void limpa_cenario_montagem(CenarioMontagem cenario)
         excluir_objeto(cenario.molho_visual[i]);
     }
     esconder_objeto(cenario.main_tela, cenario.fundo_montagem);
+    esconder_objeto(cenario.main_tela, cenario.cursor);
+    esconder_objeto(cenario.main_tela, cenario.gaveta_extra);
     esconder_objeto(cenario.cd_tela, cenario.fundo_cardapio);
 
     excluir_objeto(cenario.fundo_montagem);
@@ -296,6 +298,20 @@ Obj monta_ingrediente(Screen* atual, Obj hamburguer, IngredienteObj* ingrediente
     ingrediente_atual->i = -1;
     
     return novo_hamburguer;
+}
+
+void limpar_area_receita(Screen* tela_cardapio)
+{
+    for (int y = 10; y <= tela_cardapio->screen_size.y; y+=2) 
+    {
+        moveCursor(nv2(0, y));
+        for (int x = 10; x < tela_cardapio->screen_size.x; x++) 
+        {
+            putchar(' ');
+            tela_cardapio->buffer[y][x] = COR_NULA;
+        }
+    }
+    moveCursor(VETOR_NULO);
 }
 
 void print_receita (tp_pilha receita, int x0)
@@ -335,8 +351,9 @@ void mostrar_controles (Screen* atual)
     Retorna false caso GameOver (WIP) -> isso depende do estoque. GameOver = não há mais estoque
     Já atualiza a grana do jogador e (futuramente) atualiza seu gasto de ingredientes no estoque
 */
-bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog)
+bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int* qtd_hamburgueres)
 {
+    *qtd_hamburgueres = 0;
     moveCursor(VETOR_NULO);
     system("cls");
     const Vector2 prato_pos = nv2(-1, 10);
@@ -367,6 +384,7 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog)
         mostrar_controles(atual);
 
         char input = ler_teclado();
+        if (input == 'T') break;
         switch (toupper(input))
         {
         case 'X': // abre/fecha o cardápio
@@ -387,8 +405,12 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog)
             break;
 
         case 'M': // Envia o ingrediente ao cliente
+            *qtd_hamburgueres += 1;
             int alt = altura_pilha(&(pedido_atual->receita));
+            //printf("altura do pedido: %d\n", alt);
             float fator = (alt - compara_pilhas(montagem, pedido_atual->receita))/alt;
+            //printf("fator: %f\n", fator);
+            //printf("Valor original: %f\n", pedido_atual->valor);
             float ganho = pedido_atual->valor * fator;
             jog->dinheiro += ganho;
             inicializa_pilha(&montagem);
@@ -401,7 +423,7 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog)
             alterar_pivot_obj(hamburguer, nv2(0, hamburguer->size.y/2));
             teleportar_objeto(cenario.main_tela, hamburguer, prato_pos);
 
-            moveCursor(nv2(1, 1+atual->screen_size.y));
+            moveCursor(nv2(0, 3+atual->screen_size.y));
             dequeue(fila_de_pedidos, &hamb_id);
             if (front(fila_de_pedidos, &hamb_id))
                 pedido_atual = c->hamburgueres[hamb_id];
@@ -414,7 +436,7 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog)
                     if (qtd <= 0) return false; // GameOver!!! Sem mais bases de pão
                 */
             }
-            printf("Você enviou um hamburguer e ganhou %f PatoCoin$!\n", ganho);
+            printf("Você enviou um hamburguer e ganhou %.2f PatoCoin$!\n", ganho);
             break;
 
         case 'P': // Pega o ingrediente
@@ -441,24 +463,6 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog)
             ingrediente_atual.o = NULL;
             ingrediente_atual.i = -1;
             break;
-        
-        // DEBUG
-        /*
-        case 'T':
-            moveCursor(nv2(1, 1+atual->screen_size.y));
-            print_vector(vector_sum(nv2(65, 15), cursor->position), "Cursor");
-            break;
-        case 'R':
-            if (no_cardapio) break;
-            Color c1 = converter_ABGR_para_Color(0xffa5ffdd);
-            aplicar_molho_visual(main_tela, hamburguer, c1);
-            break;
-        case 'E':
-            if (no_cardapio) break;
-            Color c2 = converter_ABGR_para_Color(0xff051a45);
-            aplicar_molho_visual(main_tela, hamburguer, c2);
-            break;
-        */
         }
 
         Vector2 v = get_direcao(input);
@@ -475,21 +479,22 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog)
 
             if (pagina_antiga != pagina)
             {
-                limpar_buffer(cenario.cd_tela);
-                system("cls");
+                limpar_area_receita(cenario.cd_tela);
+
                 if (pagina_antiga != -1)
                 {
                     esconder_objeto(cenario.cd_tela, t1);
                     esconder_objeto(cenario.cd_tela, t2);
                     excluir_objeto(t1); excluir_objeto(t2);
                 }
-                t1  = t2 = NULL;
+                t1 = t2 = NULL;
                 t1 = criar_objeto_de_texto(1, 1, c->hamburgueres[pagina]->nome);
                 somar_cor_obj(t1, COLOR_VERMELHO);
                 t2 = criar_objeto_de_texto(1, 1, c->hamburgueres[pagina+1]->nome);
                 somar_cor_obj(t2, COLOR_VERMELHO);
                 teleportar_objeto(cenario.cd_tela, t1, nv2(-55, -11));
                 teleportar_objeto(cenario.cd_tela, t2, nv2(11, -11));
+
                 render_com_texto(atual, no_cardapio);
                 print_receita(c->hamburgueres[pagina]->receita, 11);
                 print_receita(c->hamburgueres[pagina+1]->receita, 75);
@@ -510,13 +515,18 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog)
         }
     }
 
-    if (t1 != NULL) excluir_objeto(t1);
-    if (t2 != NULL) excluir_objeto(t2);
+    if (t1 != NULL) {esconder_objeto(cenario.cd_tela, t1); excluir_objeto(t1);}
+    if (t2 != NULL) {esconder_objeto(cenario.cd_tela, t2); excluir_objeto(t2);}
 
     printf("Parabéns! Você entregou todos os pedidos!\n");
     printf("Pressione qualquer coisa para continuar...\n");
     getchar();
     
+    if (hamburguer->ref_node != NULL)
+    {
+        remover_da_lista(cenario.main_tela->obj_list, hamburguer->ref_node);
+        hamburguer->ref_node = NULL;
+    }
     excluir_objeto(hamburguer);
     limpa_cenario_montagem(cenario);
 

@@ -6,14 +6,14 @@
 #include <stdbool.h>
 
 typedef int tp_item_fila;
-typedef struct Nodo {
+typedef struct NodoFila {
     tp_item_fila info;
-    struct Nodo* prox;
-} Nodo;
+    struct NodoFila* prox;
+} NodoFila;
 
 typedef struct {
-    Nodo* ini;
-    Nodo* fim;
+    NodoFila* ini;
+    NodoFila* fim;
     int tam;
 } Fila_D;
 
@@ -38,7 +38,7 @@ bool fila_vazia (Fila_D* f)
 
 bool enqueue (Fila_D* f, tp_item_fila x)
 {
-    Nodo* novo = (Nodo*)malloc(sizeof(Nodo));
+    NodoFila* novo = (NodoFila*)malloc(sizeof(NodoFila));
     if (novo == NULL)
     {
         fprintf(stderr, "Erro ao alocar memória para a fila\n");
@@ -62,7 +62,7 @@ bool dequeue (Fila_D* f, tp_item_fila* x)
         return false;
     }
     *x = f->ini->info;
-    Nodo* antigo = f->ini;
+    NodoFila* antigo = f->ini;
     f->ini = f->ini->prox;
     free(antigo);
     f->tam--;
@@ -83,10 +83,10 @@ bool front (Fila_D* f, tp_item_fila* x)
 void destruir_fila(Fila_D* f) 
 {
     if (f == NULL) return;
-    Nodo* atual = f->ini;
+    NodoFila* atual = f->ini;
     while (atual != NULL) 
     {
-        Nodo* temp = atual;
+        NodoFila* temp = atual;
         atual = atual->prox;
         free(temp);
     }

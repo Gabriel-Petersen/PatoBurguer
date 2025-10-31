@@ -1,6 +1,7 @@
 #define USE_SHORTCUTS
 #include "montagem.h"
 #include "assets/logo.h"
+#include "loja.h"
 #include <time.h>
 #include <windows.h>
 #include <locale.h>
@@ -13,7 +14,7 @@ int qtd_clientes (int qtd_dias)
     return qtd_dias + 3;
 }
 
-void inicio_de_dia (Jogador* jog, Cardapio* c)
+int inicio_de_dia (Jogador* jog, Cardapio* c)
 {
     Fila_D* q = inicializa_fila();
     int qtd = qtd_clientes(jog->dia_atual);
@@ -47,14 +48,18 @@ void inicio_de_dia (Jogador* jog, Cardapio* c)
     }
     system("cls");
 
-    etapa_de_montagem(q, c, jog);
+    int qtd_hamb;
+    etapa_de_montagem(q, c, jog, &qtd_hamb);
     destruir_fila(q);
     q = NULL;
+    return qtd_hamb;
 }
 
 void tela_inicial ()
 {
     setlocale(LC_CTYPE, "pt_BR.UTF-8");
+    printf("Pressione qualquer coisa para começar a jogar!...");
+    getchar();
     Screen* tela_inicio = criar_tela(nv2(120, 30), COLOR_CIANO, 10);
     Obj fundo = criar_piskel_obj(logo_ini_data[0], LOGO_INI_FRAME_WIDTH, LOGO_INI_FRAME_HEIGHT);
     centralizar_objeto(fundo);
@@ -79,8 +84,25 @@ int main ()
     // INICIALIZANDO SEM VERIFICAR ARQUIVO
     Jogador* jog = inicializa_jogador(NULL);
     inicializa_cardapio(&cardapio);
-    inicio_de_dia(jog, &cardapio);
 
-    jog = destruir_jogador(jog);
+    // LOOP EXTREMAMENTE SIMPLIFICADO
+    // LÓGICA DE LUIZ GUSTAVO -> ESPERA-SE QUE ELE DÊ UMA MELHORADA NESSA PARTE
+    while (true)
+    {
+        int qtd_hamburgueres = inicio_de_dia(jog, &cardapio);
+        jog->dia_atual++;
+        // AQUI PRECISAMOS DE fopen("caminho_do_arquivo.txt", "a") e precisamos atualizar os dados
+        iniciar_loja(jog);
+        system("cls");
+        printf("Digite X para sair: ");
+        char c;
+        scanf("%c", &c);
+        if (c == 'X' || c == 'x')
+        {
+            jog = destruir_jogador(jog);
+            return 0;
+        }
+    }
+
     return 0;
 }

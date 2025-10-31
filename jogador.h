@@ -1,3 +1,6 @@
+#ifndef JOGADOR_H
+#define JOGADOR_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -42,3 +45,5 @@ Jogador* destruir_jogador (Jogador* j)
     j = NULL;
     return j;
 }
+
+#endif
