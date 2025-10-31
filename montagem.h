@@ -351,8 +351,9 @@ void mostrar_controles (Screen* atual)
     Retorna false caso GameOver (WIP) -> isso depende do estoque. GameOver = não há mais estoque
     Já atualiza a grana do jogador e (futuramente) atualiza seu gasto de ingredientes no estoque
 */
-bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog)
+bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int* qtd_hamburgueres)
 {
+    *qtd_hamburgueres = 0;
     moveCursor(VETOR_NULO);
     system("cls");
     const Vector2 prato_pos = nv2(-1, 10);
@@ -403,6 +404,7 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog)
             break;
 
         case 'M': // Envia o ingrediente ao cliente
+            *qtd_hamburgueres += 1;
             int alt = altura_pilha(&(pedido_atual->receita));
             float fator = (alt - compara_pilhas(montagem, pedido_atual->receita))/alt;
             float ganho = pedido_atual->valor * fator;

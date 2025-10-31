@@ -42,20 +42,9 @@ void preenche_ingredientes(Ingrediente ingredientes[]){
     ingredientes[12]=BARBERCUE;
 	return;
 }
-typedef struct{
-	Screen *main_tela;
-    Obj fundo_loja; // Se sobrar tempo, fazer um desenho no piskel e colocar o arquivo na pasta assets para fazer um fundinho p/ loja
-}CenarioLoja;
-void iniciar_loja(Jogador *J){
-	CenarioLoja cenario;
-	cenario.main_tela=criar_tela(nv2(131,31),COLOR_CIANO,50);
-	//cenario.fundo_loja=criar_piskel_obj();
-	centralizar_objeto(cenario.fundo_loja);
-	printf("Bem vindo à loja!\n");
-	printf("Aqui você pode comprar e vender ingredientes. Fique atento à sua quantidade de moedas, pois se elas acabarem você perde o jogo.\n");
-	printf("Boas compras!\n");
-	printf("Aperte qualquer tecla para continuar\n");
-	getchar();
+
+Lista_DE* criar_lista_de_ingredientes ()
+{
 	Lista_DE *I=inicializa_lista();
 	Ingrediente ingredientes[QTD_INGREDIENTES];
 	preenche_ingredientes(ingredientes);
@@ -68,6 +57,25 @@ void iniciar_loja(Jogador *J){
 		centralizar_objeto(Item.obj);
 	}
 	deixa_circular(I);
+	return I;
+}
+
+typedef struct{
+	Screen *main_tela;
+    Obj fundo_loja; // Se sobrar tempo, fazer um desenho no piskel e colocar o arquivo na pasta assets para fazer um fundinho p/ loja
+}CenarioLoja;
+void iniciar_loja(Jogador *J){
+	CenarioLoja cenario;
+	cenario.main_tela=criar_tela(nv2(131,31),COLOR_CIANO,50);
+	//cenario.fundo_loja=criar_piskel_obj();
+	//centralizar_objeto(cenario.fundo_loja);
+	//desenhar_objeto(cenario.main_tela, cenario.fundo_loja);
+	printf("Bem vindo à loja!\n");
+	printf("Aqui você pode comprar e vender ingredientes. Fique atento à sua quantidade de moedas, pois se elas acabarem você perde o jogo.\n");
+	printf("Boas compras!\n");
+	printf("Aperte qualquer tecla para continuar\n");
+	getchar();
+	Lista_DE *I=criar_lista_de_ingredientes();
 	Nodo *p=I->ini;
 	desenhar_objeto(cenario.main_tela,p->info.obj);
 	while(true){
