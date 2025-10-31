@@ -46,51 +46,43 @@ typedef struct{
 	Screen *main_tela;
     Obj fundo_loja; // Se sobrar tempo, fazer um desenho no piskel e colocar o arquivo na pasta assets para fazer um fundinho p/ loja
 }CenarioLoja;
-
 void iniciar_loja(Jogador *J){
 	CenarioLoja cenario;
 	cenario.main_tela=criar_tela(nv2(131,31),COLOR_CIANO,50);
-	// Se você fizer um desenho, faça cenario.fundo_loja = criar_piskel bla bla bla
-	// Se você fizer um desenho, centralize cenario.fundo_loja e desenhe. Note que deve esconder e excluir ao limpar memória
+	//cenario.fundo_loja=criar_piskel_obj();
+	centralizar_objeto(cenario.fundo_loja);
 	printf("Bem vindo à loja!\n");
 	printf("Aqui você pode comprar e vender ingredientes. Fique atento à sua quantidade de moedas, pois se elas acabarem você perde o jogo.\n");
 	printf("Boas compras!\n");
-
-	// Coloca o printf (digite algo para seguir)
-	// coloca getchar() -> olhe a main para ter uma referência
-
+	printf("Aperte qualquer tecla para continuar\n");
+	getchar();
 	Lista_DE *I=inicializa_lista();
 	Ingrediente ingredientes[QTD_INGREDIENTES];
 	preenche_ingredientes(ingredientes);
 	for(int i=0;i<QTD_INGREDIENTES;i++){
 		ItemDaLista Item;
 		Item.ing=ingredientes[i];
-		if (i < 11)
-			Item.obj=criar_piskel_obj(ingredientes_data[i],INGREDIENTES_FRAME_WIDTH,INGREDIENTES_FRAME_HEIGHT);
-		else
-			Item.obj=criar_piskel_obj(molhos_data[i-11],MOLHOS_FRAME_WIDTH,MOLHOS_FRAME_HEIGHT);
+		if(i<11)Item.obj=criar_piskel_obj(ingredientes_data[i],INGREDIENTES_FRAME_WIDTH,INGREDIENTES_FRAME_HEIGHT);
+		else Item.obj=criar_piskel_obj(molhos_data[i-11],MOLHOS_FRAME_WIDTH,MOLHOS_FRAME_HEIGHT);
 		insere_fim(I,Item);
 		centralizar_objeto(Item.obj);
 	}
 	deixa_circular(I);
 	Nodo *p=I->ini;
-
-	// desenhe p->info.obj
-
+	desenhar_objeto(cenario.main_tela,p->info.obj);
 	while(true){
 		render(cenario.main_tela,true);
 		mostrar_controles();
 		char input=ler_teclado();
 		switch(input){
 			case 'X':
-				// LIMPE MEMÓRIA AQUI
-				// Limpe memória com uma função a parte ou aqui dentro mesmo
-				// Para percorrer a lista:
-				// for(int i = 0, Nodo *atu = I->ini; i < QTD_INGREDIENTES; i++, atu = atu->prox)
-				//{
-					// esconda atu->info.obj
-					// exclua atu->info.obj
-				//}
+				esconder_objeto(cenario.main_tela,p->info.obj);
+				Nodo* atu = I->ini;
+				for(int i=0;i<QTD_INGREDIENTES;i++, atu=atu->prox)excluir_objeto(atu->info.obj);
+				destruir_lista(I);
+				//esconder_objeto(cenario.main_tela,cenario.fundo_loja);
+				//excluir_objeto(cenario.fundo_loja);
+				excluir_tela(cenario.main_tela);
 				return;
 			case 'D':
 				esconder_objeto(cenario.main_tela,p->info.obj);
@@ -110,8 +102,7 @@ void iniciar_loja(Jogador *J){
 				else printf("Dinheiro insuficiente\n");
 				break;
 			case 'V':
-				// Coloque um if no comentário: 
-				// Se buscar(jogador->estoque, p->info.ing) for nulo é porque ele não tem esse ingrediente no estoque -> break;
+				//if(buscar_no_estoque(jogador->estoque,p->info.ing)==NULL)break;
 				J->dinheiro+=p->info.ing.valor;
 				//remove o ingrediente do estoque
 				break;
