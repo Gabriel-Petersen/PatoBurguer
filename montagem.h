@@ -384,8 +384,12 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
         mostrar_controles(atual);
 
         char input = ler_teclado();
+        if (input == 'T') break;
         switch (toupper(input))
         {
+        case 'H':
+            printf("Dinheiro atual: %lf\n", jog->dinheiro);
+            break;
         case 'X': // abre/fecha o cardápio
             system("cls");
             moveCursor(VETOR_NULO);
@@ -406,9 +410,15 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
         case 'M': // Envia o ingrediente ao cliente
             *qtd_hamburgueres += 1;
             int alt = altura_pilha(&(pedido_atual->receita));
-            float fator = (alt - compara_pilhas(montagem, pedido_atual->receita))/alt;
+            //printf("altura do pedido: %d\n", alt);
+            float fator = (float)((float)alt - compara_pilhas(montagem, pedido_atual->receita))/alt;
+            //printf("fator: %f\n", fator);
+            //printf("Valor original: %f\n", pedido_atual->valor);
             float ganho = pedido_atual->valor * fator;
-            jog->dinheiro += ganho;
+            jog->dinheiro += max(0, ganho);
+            moveCursor(nv2(0, 34));
+            printf("Você enviou um hamburguer e ganhou %.2f/%.2f PatoCoin$!\n", ganho, pedido_atual->valor);
+
             inicializa_pilha(&montagem);
             push(&montagem, PAO_BAIXO);
 
@@ -432,7 +442,6 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
                     if (qtd <= 0) return false; // GameOver!!! Sem mais bases de pão
                 */
             }
-            printf("Você enviou um hamburguer e ganhou %.2f PatoCoin$!\n", ganho);
             break;
 
         case 'P': // Pega o ingrediente
@@ -464,6 +473,11 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
         Vector2 v = get_direcao(input);
         if (no_cardapio)
         {
+            if (input == 'G')
+            {
+                esconder_objeto(cenario.cd_tela, t1);
+                esconder_objeto(cenario.cd_tela, t2);
+            }
             if (compare_vector(v, VETOR_DIREITA) && pagina < 8)
             {
                 pagina += 2;
@@ -477,12 +491,17 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
             {
                 limpar_area_receita(cenario.cd_tela);
 
-                if (pagina_antiga != -1)
+                if (t1 != NULL)
                 {
                     esconder_objeto(cenario.cd_tela, t1);
-                    esconder_objeto(cenario.cd_tela, t2);
-                    excluir_objeto(t1); excluir_objeto(t2);
+                    excluir_objeto(t1);
                 }
+                if (t2 != NULL)
+                {
+                    esconder_objeto(cenario.cd_tela, t2);
+                    excluir_objeto(t2);
+                }
+                t1 = t2 = NULL;
                 t1 = t2 = NULL;
                 t1 = criar_objeto_de_texto(1, 1, c->hamburgueres[pagina]->nome);
                 somar_cor_obj(t1, COLOR_VERMELHO);

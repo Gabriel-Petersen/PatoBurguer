@@ -11,7 +11,7 @@
 int qtd_clientes (int qtd_dias)
 {
     // sla fórmula aleatória
-    return qtd_dias + 3;
+    return qtd_dias + 2;
 }
 
 int inicio_de_dia (Jogador* jog, Cardapio* c)
@@ -58,6 +58,8 @@ int inicio_de_dia (Jogador* jog, Cardapio* c)
 void tela_inicial ()
 {
     setlocale(LC_CTYPE, "pt_BR.UTF-8");
+    printf("Pressione qualquer coisa para começar a jogar!...");
+    getchar();
     Screen* tela_inicio = criar_tela(nv2(120, 30), COLOR_CIANO, 10);
     Obj fundo = criar_piskel_obj(logo_ini_data[0], LOGO_INI_FRAME_WIDTH, LOGO_INI_FRAME_HEIGHT);
     centralizar_objeto(fundo);
@@ -83,18 +85,15 @@ int main ()
     Jogador* jog = inicializa_jogador(NULL);
     inicializa_cardapio(&cardapio);
 
-    // LOOP EXTREMAMENTE SIMPLIFICADO
-    // LÓGICA DE LUIZ GUSTAVO -> ESPERA-SE QUE ELE DÊ UMA MELHORADA NESSA PARTE
     while (true)
     {
         int qtd_hamburgueres = inicio_de_dia(jog, &cardapio);
         jog->dia_atual++;
-        // AQUI PRECISAMOS DE fopen("caminho_do_arquivo.txt", "a") e precisamos atualizar os dados
+        printf("Hamburgueres vendidos: %d\n", qtd_hamburgueres);
         iniciar_loja(jog);
-        system("cls");
-        printf("Digite X para sair: ");
+        printf("Digite X para sair do jogo ou qualquer outra coisa para seguir para o próximo dia: ");
         char c;
-        scanf("%c", &c);
+        scanf(" %c", &c);
         if (c == 'X' || c == 'x')
         {
             jog = destruir_jogador(jog);

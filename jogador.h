@@ -1,11 +1,13 @@
+#ifndef JOGADOR_H
+#define JOGADOR_H
+
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef long double ldouble;
 #define DINHEIRO_INICIAL 100
 typedef struct {
     char nome[30];
-    ldouble dinheiro;
+    float dinheiro;
     int dia_atual;
     //RBTree* estoque;
 } Jogador;
@@ -42,3 +44,5 @@ Jogador* destruir_jogador (Jogador* j)
     j = NULL;
     return j;
 }
+
+#endif

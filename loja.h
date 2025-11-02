@@ -6,9 +6,10 @@
 #include"estruturas_de_dados/listade.h"
 #include"assets/piskel_ingredientes.h"
 #include"assets/piskel_molhos.h"
+#include"assets/fundo_loja.h"
 #include"jogador.h"
 
-void mostrar_controles(){
+void mostrar_controles_loja(){
     printf("Controles:\n");
     printf("X: Sair da Loja | ");
     printf("D: Próximo Ingrediente | ");
@@ -17,14 +18,17 @@ void mostrar_controles(){
     printf("V: Vender Ingrediente | ");
     return;
 }
-inline void mostrar_grana(Jogador *j){
-	printf("\nQuantidade de moedas: %.2Lf",j->dinheiro);
+void mostrar_grana(Jogador *j){
+	printf("\nQuantidade de moedas: %.2f",j->dinheiro);
 	return;
 }
 void deixa_circular(Lista_DE *l){
 	l->fim->prox=l->ini;
 	l->ini->ant=l->fim;
 	return;
+}
+void remove_circularidade(Lista_DE* l){
+	l->ini->ant = l->fim->prox = NULL;
 }
 void preenche_ingredientes(Ingrediente ingredientes[]){
 	ingredientes[0]=PAO_CIMA;
@@ -66,10 +70,10 @@ typedef struct{
 }CenarioLoja;
 void iniciar_loja(Jogador *J){
 	CenarioLoja cenario;
-	cenario.main_tela=criar_tela(nv2(131,31),COLOR_CIANO,50);
-	//cenario.fundo_loja=criar_piskel_obj();
-	//centralizar_objeto(cenario.fundo_loja);
-	//desenhar_objeto(cenario.main_tela, cenario.fundo_loja);
+	cenario.main_tela=criar_tela(nv2(131,31),criar_cor(168,0,0),50);
+	cenario.fundo_loja=criar_piskel_obj(fundo_loja_data[0],FUNDO_LOJA_FRAME_WIDTH,FUNDO_LOJA_FRAME_HEIGHT);
+	centralizar_objeto(cenario.fundo_loja);
+	desenhar_objeto(cenario.main_tela, cenario.fundo_loja);
 	printf("Bem vindo à loja!\n");
 	printf("Aqui você pode comprar e vender ingredientes. Fique atento à sua quantidade de moedas, pois se elas acabarem você perde o jogo.\n");
 	printf("Boas compras!\n");
@@ -80,16 +84,18 @@ void iniciar_loja(Jogador *J){
 	desenhar_objeto(cenario.main_tela,p->info.obj);
 	while(true){
 		render(cenario.main_tela,true);
-		mostrar_controles();
+		mostrar_controles_loja();
+		mostrar_grana(J);
 		char input=ler_teclado();
 		switch(input){
 			case 'X':
 				esconder_objeto(cenario.main_tela,p->info.obj);
 				Nodo* atu = I->ini;
 				for(int i=0;i<QTD_INGREDIENTES;i++, atu=atu->prox)excluir_objeto(atu->info.obj);
+				remove_circularidade(I);
 				destruir_lista(I);
-				//esconder_objeto(cenario.main_tela,cenario.fundo_loja);
-				//excluir_objeto(cenario.fundo_loja);
+				esconder_objeto(cenario.main_tela,cenario.fundo_loja);
+				excluir_objeto(cenario.fundo_loja);
 				excluir_tela(cenario.main_tela);
 				return;
 			case 'D':
@@ -115,7 +121,7 @@ void iniciar_loja(Jogador *J){
 				//remove o ingrediente do estoque
 				break;
 		}
-		mostrar_grana(J);
+	
 	}
 }
 
