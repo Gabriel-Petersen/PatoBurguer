@@ -24,7 +24,7 @@ int inicio_de_dia (Jogador* jog, Cardapio* c)
     Sleep(1500);
     system("cls");
     print_rgb_txt(COLOR_VERDE, VETOR_NULO, "Os pedidos já foram escolhidos!\nPrepare sua memória, pois só serão mostrados uma vez!\n");
-    printf("Digite qualquer coisa quando estiver pronto!");
+    printf("Digite qualquer tecla quando estiver pronto!");
     getchar();
     system("cls");
     printf("\n");
@@ -58,7 +58,7 @@ int inicio_de_dia (Jogador* jog, Cardapio* c)
 void tela_inicial ()
 {
     setlocale(LC_CTYPE, "pt_BR.UTF-8");
-    printf("Pressione qualquer coisa para começar a jogar!...");
+    printf("Pressione qualquer tecla para começar a jogar!...");
     getchar();
     Screen* tela_inicio = criar_tela(nv2(120, 30), COLOR_CIANO, 10);
     Obj fundo = criar_piskel_obj(logo_ini_data[0], LOGO_INI_FRAME_WIDTH, LOGO_INI_FRAME_HEIGHT);
@@ -66,7 +66,7 @@ void tela_inicial ()
     desenhar_objeto(tela_inicio, fundo);
     render(tela_inicio, true);
     
-    printf("Pressione qualquer coisa para começar a jogar!...");
+    printf("Pressione qualquer tecla para começar a jogar!...");
     getchar();
 
     esconder_objeto(tela_inicio, fundo);

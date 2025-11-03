@@ -63,14 +63,13 @@ Lista_DE* criar_lista_de_ingredientes ()
 	deixa_circular(I);
 	return I;
 }
-
 typedef struct{
 	Screen *main_tela;
-    Obj fundo_loja; // Se sobrar tempo, fazer um desenho no piskel e colocar o arquivo na pasta assets para fazer um fundinho p/ loja
+    Obj fundo_loja;
 }CenarioLoja;
 void iniciar_loja(Jogador *J){
 	CenarioLoja cenario;
-	cenario.main_tela=criar_tela(nv2(131,31),criar_cor(168,0,0),50);
+	cenario.main_tela=criar_tela(nv2(131,31),criar_cor(93,0,0),50);
 	cenario.fundo_loja=criar_piskel_obj(fundo_loja_data[0],FUNDO_LOJA_FRAME_WIDTH,FUNDO_LOJA_FRAME_HEIGHT);
 	centralizar_objeto(cenario.fundo_loja);
 	desenhar_objeto(cenario.main_tela, cenario.fundo_loja);
@@ -81,7 +80,9 @@ void iniciar_loja(Jogador *J){
 	getchar();
 	Lista_DE *I=criar_lista_de_ingredientes();
 	Nodo *p=I->ini;
-	desenhar_objeto(cenario.main_tela,p->info.obj);
+	teleportar_objeto(cenario.main_tela,p->ant->info.obj,nv2(-27,0));
+	teleportar_objeto(cenario.main_tela,p->info.obj,nv2(0,-5));
+	teleportar_objeto(cenario.main_tela,p->prox->info.obj,nv2(27,0));
 	while(true){
 		render(cenario.main_tela,true);
 		mostrar_controles_loja();
@@ -99,21 +100,27 @@ void iniciar_loja(Jogador *J){
 				excluir_tela(cenario.main_tela);
 				return;
 			case 'D':
-				esconder_objeto(cenario.main_tela,p->info.obj);
+				esconder_objeto(cenario.main_tela,p->ant->info.obj);
 				p=p->prox;
-				desenhar_objeto(cenario.main_tela,p->info.obj);
+				teleportar_objeto(cenario.main_tela,p->ant->info.obj,nv2(-27,0));
+				teleportar_objeto(cenario.main_tela,p->info.obj,nv2(0,-5));
+				teleportar_objeto(cenario.main_tela,p->prox->info.obj,nv2(27,0));
 				break;
 			case 'A':
+				esconder_objeto(cenario.main_tela,p->ant->info.obj);
 				esconder_objeto(cenario.main_tela,p->info.obj);
+				esconder_objeto(cenario.main_tela,p->prox->info.obj);
 				p=p->ant;
-				desenhar_objeto(cenario.main_tela,p->info.obj);
+				teleportar_objeto(cenario.main_tela,p->ant->info.obj,nv2(-27,0));
+				teleportar_objeto(cenario.main_tela,p->info.obj,nv2(0,-5));
+				teleportar_objeto(cenario.main_tela,p->prox->info.obj,nv2(27,0));
 				break;
 			case 'C':
 				if(J->dinheiro>=p->info.ing.valor){
 					J->dinheiro-=p->info.ing.valor;
 					//adiciona o ingrediente ao estoque
 				}
-				else printf("Dinheiro insuficiente\n");
+				else printf("\nDinheiro insuficiente");
 				break;
 			case 'V':
 				//if(buscar_no_estoque(jogador->estoque,p->info.ing)==NULL)break;
@@ -121,7 +128,6 @@ void iniciar_loja(Jogador *J){
 				//remove o ingrediente do estoque
 				break;
 		}
-	
 	}
 }
 
