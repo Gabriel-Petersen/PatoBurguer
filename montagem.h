@@ -348,7 +348,7 @@ void mostrar_controles (Screen* atual)
 /*
     Organiza toda a etapa de montagem, lendo e esvaziando a fila de pedidos a medida que o player vai cozinhando
     Retorna true se o jogo correu bem
-    Retorna false caso GameOver (WIP) -> isso depende do estoque. GameOver = não há mais estoque
+    Retorna false caso GameOver (WIP) -> isso depende do estoque. GameOver == não há mais estoque
     Já atualiza a grana do jogador e (futuramente) atualiza seu gasto de ingredientes no estoque
 */
 bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int* qtd_hamburgueres)
@@ -384,7 +384,10 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
         mostrar_controles(atual);
 
         char input = ler_teclado();
-        if (input == 'T') break;
+        #ifdef INDEVMODE
+            if (input == 'T') break;
+        #endif
+
         switch (toupper(input))
         {
         case 'H':
@@ -502,7 +505,6 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
                     excluir_objeto(t2);
                 }
                 t1 = t2 = NULL;
-                t1 = t2 = NULL;
                 t1 = criar_objeto_de_texto(1, 1, c->hamburgueres[pagina]->nome);
                 somar_cor_obj(t1, COLOR_VERMELHO);
                 t2 = criar_objeto_de_texto(1, 1, c->hamburgueres[pagina+1]->nome);
@@ -533,8 +535,8 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
     if (t1 != NULL) {esconder_objeto(cenario.cd_tela, t1); excluir_objeto(t1);}
     if (t2 != NULL) {esconder_objeto(cenario.cd_tela, t2); excluir_objeto(t2);}
 
-    printf("Parabéns! Você entregou todos os pedidos!\n");
-    printf("Pressione qualquer coisa para continuar...\n");
+    printf("\nParabéns! Você entregou todos os pedidos!\n");
+    print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Pressione qualquer coisa para continuar!\n");
     getchar();
     
     if (hamburguer->ref_node != NULL)

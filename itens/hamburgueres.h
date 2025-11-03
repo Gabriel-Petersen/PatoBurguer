@@ -145,13 +145,13 @@ Hamburguer* criar_quack_overflow(int i)
     push(&(quack_overflow->receita), PAO_BAIXO);
     push(&(quack_overflow->receita), QUEIJO);
     push(&(quack_overflow->receita), PICLES);
-    push(&(quack_overflow->receita), CEBOLA_CARAMELIZADA);
+    push(&(quack_overflow->receita), CEBOLA);
     push(&(quack_overflow->receita), ONION_RINGS);
     push(&(quack_overflow->receita), CARNE);
     push(&(quack_overflow->receita), PAO_BAIXO);
     push(&(quack_overflow->receita), CARNE);
     push(&(quack_overflow->receita), ONION_RINGS);
-    push(&(quack_overflow->receita), CEBOLA_CARAMELIZADA);
+    push(&(quack_overflow->receita), CEBOLA);
     push(&(quack_overflow->receita), PICLES);
     push(&(quack_overflow->receita), QUEIJO);
     push(&(quack_overflow->receita), PAO_CIMA);

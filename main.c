@@ -1,21 +1,29 @@
 #define USE_SHORTCUTS
+#define INDEVMODE
 #include "montagem.h"
 #include "assets/logo.h"
 #include "loja.h"
+#include "jogador.h"
 #include <time.h>
 #include <windows.h>
 #include <locale.h>
 
 // Sorteia qtd pedidos do cardápio e, após todos os sorteios, mostra na tela os pedidos para memorização do jogador
-
 int qtd_clientes (int qtd_dias)
 {
+    
+    #ifdef INDEVMODE
+    return qtd_dias;
+    #else
     // sla fórmula aleatória
     return qtd_dias + 2;
+    #endif
 }
 
+// Gera a fila de pedidos e chama a etapa de montagem
 int inicio_de_dia (Jogador* jog, Cardapio* c)
 {
+    system("cls");
     Fila_D* q = inicializa_fila();
     int qtd = qtd_clientes(jog->dia_atual);
 
@@ -24,7 +32,7 @@ int inicio_de_dia (Jogador* jog, Cardapio* c)
     Sleep(1500);
     system("cls");
     print_rgb_txt(COLOR_VERDE, VETOR_NULO, "Os pedidos já foram escolhidos!\nPrepare sua memória, pois só serão mostrados uma vez!\n");
-    printf("Digite qualquer tecla quando estiver pronto!");
+    print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Digite qualquer coisa quando estiver pronto!\n");
     getchar();
     system("cls");
     printf("\n");
@@ -57,8 +65,8 @@ int inicio_de_dia (Jogador* jog, Cardapio* c)
 
 void tela_inicial ()
 {
-    setlocale(LC_CTYPE, "pt_BR.UTF-8");
-    printf("Pressione qualquer tecla para começar a jogar!...");
+    printf("Recomendamos colocar o terminal em tela cheia\n");
+    print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Pressione qualquer coisa para começar a jogar!...\n");
     getchar();
     Screen* tela_inicio = criar_tela(nv2(120, 30), COLOR_CIANO, 10);
     Obj fundo = criar_piskel_obj(logo_ini_data[0], LOGO_INI_FRAME_WIDTH, LOGO_INI_FRAME_HEIGHT);
@@ -66,7 +74,7 @@ void tela_inicial ()
     desenhar_objeto(tela_inicio, fundo);
     render(tela_inicio, true);
     
-    printf("Pressione qualquer tecla para começar a jogar!...");
+    print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Pressione qualquer coisa para começar a jogar!...\n");
     getchar();
 
     esconder_objeto(tela_inicio, fundo);
@@ -76,21 +84,45 @@ void tela_inicial ()
     tela_inicio = NULL;
 }
 
+void print_atualizacoes (Jogador* jog, int qtdh)
+{
+    Vector2 v = nv2(-1, -1);
+    printf("Dia: ");
+    print_rgb_txt(COLOR_CIANO, v, "%d\n", jog->dia_atual);
+
+    printf("Dinheiro atual: ");
+    print_rgb_txt(COLOR_VERDE, v, "%.2f PatoCoin$\n", jog->dinheiro);
+
+    printf("Hambúrgueres feitos: ");
+    print_rgb_txt(COLOR_ROXO, v, "%d\n\n", qtdh);
+}
+
+
 int main ()
 {
+    setlocale(LC_CTYPE, "pt_BR.UTF-8");
     tela_inicial();
 
     Cardapio cardapio;
-    // INICIALIZANDO SEM VERIFICAR ARQUIVO
+    // INICIALIZANDO SEM VERIFICAR ARQUIVO DE SAVE-GAME (Futuro)
     Jogador* jog = inicializa_jogador(NULL);
     inicializa_cardapio(&cardapio);
+    if(inicializa_player_save()==0) return 0;
 
     while (true)
     {
-        int qtd_hamburgueres = inicio_de_dia(jog, &cardapio);
+        int qtd_hamburgueres;
+        #ifdef SEMMONTAGEM
+        qtd_hamburgueres=0;
+        #else
+        qtd_hamburgueres = inicio_de_dia(jog, &cardapio);
+        #endif
+        atualiza_player_save(jog, qtd_hamburgueres);
         jog->dia_atual++;
-        printf("Hamburgueres vendidos: %d\n", qtd_hamburgueres);
+        print_atualizacoes(jog, qtd_hamburgueres);
+
         iniciar_loja(jog);
+
         printf("Digite X para sair do jogo ou qualquer outra coisa para seguir para o próximo dia: ");
         char c;
         scanf(" %c", &c);
@@ -100,6 +132,4 @@ int main ()
             return 0;
         }
     }
-
-    return 0;
 }

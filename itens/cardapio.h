@@ -24,7 +24,7 @@ void referencia_ingredientes(Cardapio* c)
     c->ingredientes[6] = TOMATE;
     c->ingredientes[7] = MAIONESE_TEMPERADA;
     c->ingredientes[8] = BARBERCUE;
-    c->ingredientes[9] = CEBOLA_CARAMELIZADA;
+    c->ingredientes[9] = CEBOLA;
     c->ingredientes[10] = PICLES;
     c->ingredientes[11] = OVO_FRITO;
     c->ingredientes[12] = ONION_RINGS;

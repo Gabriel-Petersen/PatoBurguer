@@ -1282,7 +1282,7 @@ static Pixel* pixel_info_do_caractere (char c, Vector2 offset, int* out_qtd_pixe
     if (char_index < 0)
     {
         if (char_index == -10)
-            printf("ERRO! Caractere não suportado inserido\n");
+            printf("ERRO! Caractere não suportado inserido -> %c\n", c);
         *out_qtd_pixel = 0;
         return NULL;
     }

@@ -10,6 +10,8 @@
 typedef struct {
 Ingrediente ing;
 Objeto* obj;
+Objeto* titulo;
+Objeto* preco;
 }ItemDaLista;
 
 typedef ItemDaLista tp_item_lista_DE;

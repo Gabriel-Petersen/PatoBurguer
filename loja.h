@@ -9,6 +9,9 @@
 #include"assets/fundo_loja.h"
 #include"jogador.h"
 
+#define POS_TITULO nv2(38, -12)
+#define POS_PRECO nv2(40, 13)
+
 void mostrar_controles_loja(){
     printf("Controles:\n");
     printf("X: Sair da Loja | ");
@@ -38,7 +41,7 @@ void preenche_ingredientes(Ingrediente ingredientes[]){
     ingredientes[4]=QUEIJO;
     ingredientes[5]=ALFACE;
     ingredientes[6]=TOMATE;
-    ingredientes[7]=CEBOLA_CARAMELIZADA;
+    ingredientes[7]=CEBOLA;
     ingredientes[8]=PICLES;
     ingredientes[9]=OVO_FRITO;
     ingredientes[10]=ONION_RINGS;
@@ -57,8 +60,26 @@ Lista_DE* criar_lista_de_ingredientes ()
 		Item.ing=ingredientes[i];
 		if(i<11)Item.obj=criar_piskel_obj(ingredientes_data[i],INGREDIENTES_FRAME_WIDTH,INGREDIENTES_FRAME_HEIGHT);
 		else Item.obj=criar_piskel_obj(molhos_data[i-11],MOLHOS_FRAME_WIDTH,MOLHOS_FRAME_HEIGHT);
-		insere_fim(I,Item);
 		centralizar_objeto(Item.obj);
+
+		Item.titulo = criar_objeto_de_texto(1, 1, Item.ing.nome);
+		if (Item.titulo == NULL) printf("Titulo do item %s ficou nulo\n", Item.ing.nome); 
+		centralizar_objeto(Item.titulo);
+		somar_cor_obj(Item.titulo, COLOR_ROXO);
+		Obj ret;
+		ret = criar_retangulo_monocromatico(criar_cor(224, 255, 255), vector_sum(Item.titulo->size, nv2(5, 1)));
+		centralizar_objeto(ret);
+		Item.titulo = merge_objeto(Item.titulo, ret, VETOR_NULO);
+
+		Item.preco = criar_objeto_de_texto(1, 1, "Custo! %.2f", Item.ing.valor);
+		if (Item.preco == NULL) printf("Titulo do item %s ficou nulo\n", Item.ing.nome); 
+		centralizar_objeto(Item.preco);
+		somar_cor_obj(Item.preco, COLOR_ROXO);
+		ret = criar_retangulo_monocromatico(criar_cor(224, 255, 255), vector_sum(Item.preco->size, nv2(5, 1)));
+		centralizar_objeto(ret);
+		Item.preco = merge_objeto(Item.preco, ret, VETOR_NULO);
+
+		insere_fim(I,Item);
 	}
 	deixa_circular(I);
 	return I;
@@ -67,22 +88,31 @@ typedef struct{
 	Screen *main_tela;
     Obj fundo_loja;
 }CenarioLoja;
+
+
+/*
+	Gerencia todo o fluxo da loja -> mostragem de itens, compra e venda, em cima de uma lista duplamente encadeada circular
+*/
 void iniciar_loja(Jogador *J){
 	CenarioLoja cenario;
 	cenario.main_tela=criar_tela(nv2(131,31),criar_cor(93,0,0),50);
 	cenario.fundo_loja=criar_piskel_obj(fundo_loja_data[0],FUNDO_LOJA_FRAME_WIDTH,FUNDO_LOJA_FRAME_HEIGHT);
 	centralizar_objeto(cenario.fundo_loja);
 	desenhar_objeto(cenario.main_tela, cenario.fundo_loja);
-	printf("Bem vindo à loja!\n");
+	print_rgb_txt(COLOR_CIANO, nv2(-1, -1), "Bem vindo à loja!\n");
 	printf("Aqui você pode comprar e vender ingredientes. Fique atento à sua quantidade de moedas, pois se elas acabarem você perde o jogo.\n");
 	printf("Boas compras!\n");
-	printf("Aperte qualquer tecla para continuar\n");
+	print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Aperte qualquer tecla para continuar\n");
 	getchar();
 	Lista_DE *I=criar_lista_de_ingredientes();
 	Nodo *p=I->ini;
 	teleportar_objeto(cenario.main_tela,p->ant->info.obj,nv2(-27,0));
 	teleportar_objeto(cenario.main_tela,p->info.obj,nv2(0,-5));
 	teleportar_objeto(cenario.main_tela,p->prox->info.obj,nv2(27,0));
+
+    teleportar_objeto(cenario.main_tela,p->info.titulo,POS_TITULO);
+	teleportar_objeto(cenario.main_tela,p->info.preco, POS_PRECO);
+
 	while(true){
 		render(cenario.main_tela,true);
 		mostrar_controles_loja();
@@ -90,9 +120,17 @@ void iniciar_loja(Jogador *J){
 		char input=ler_teclado();
 		switch(input){
 			case 'X':
+				esconder_objeto(cenario.main_tela,p->prox->info.obj);
+				esconder_objeto(cenario.main_tela,p->ant->info.obj);
 				esconder_objeto(cenario.main_tela,p->info.obj);
+				esconder_objeto(cenario.main_tela, p->info.titulo);
+				esconder_objeto(cenario.main_tela, p->info.preco);
 				Nodo* atu = I->ini;
-				for(int i=0;i<QTD_INGREDIENTES;i++, atu=atu->prox)excluir_objeto(atu->info.obj);
+				for(int i=0;i<QTD_INGREDIENTES;i++, atu=atu->prox){
+					excluir_objeto(atu->info.obj);
+					excluir_objeto(atu->info.titulo);
+					excluir_objeto(atu->info.preco);
+				}
 				remove_circularidade(I);
 				destruir_lista(I);
 				esconder_objeto(cenario.main_tela,cenario.fundo_loja);
@@ -100,20 +138,25 @@ void iniciar_loja(Jogador *J){
 				excluir_tela(cenario.main_tela);
 				return;
 			case 'D':
-				esconder_objeto(cenario.main_tela,p->ant->info.obj);
-				p=p->prox;
-				teleportar_objeto(cenario.main_tela,p->ant->info.obj,nv2(-27,0));
-				teleportar_objeto(cenario.main_tela,p->info.obj,nv2(0,-5));
-				teleportar_objeto(cenario.main_tela,p->prox->info.obj,nv2(27,0));
-				break;
 			case 'A':
 				esconder_objeto(cenario.main_tela,p->ant->info.obj);
 				esconder_objeto(cenario.main_tela,p->info.obj);
 				esconder_objeto(cenario.main_tela,p->prox->info.obj);
-				p=p->ant;
+
+				esconder_objeto(cenario.main_tela, p->info.titulo);
+				esconder_objeto(cenario.main_tela, p->info.preco);
+
+				if (input == 'A')
+					p=p->ant;
+				else
+					p=p->prox;
+				
 				teleportar_objeto(cenario.main_tela,p->ant->info.obj,nv2(-27,0));
 				teleportar_objeto(cenario.main_tela,p->info.obj,nv2(0,-5));
 				teleportar_objeto(cenario.main_tela,p->prox->info.obj,nv2(27,0));
+
+				teleportar_objeto(cenario.main_tela, p->info.titulo, POS_TITULO);
+				teleportar_objeto(cenario.main_tela, p->info.preco, POS_PRECO);
 				break;
 			case 'C':
 				if(J->dinheiro>=p->info.ing.valor){

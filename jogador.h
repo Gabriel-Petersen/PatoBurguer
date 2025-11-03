@@ -45,4 +45,37 @@ Jogador* destruir_jogador (Jogador* j)
     return j;
 }
 
+// Cria o arquivo que vai salvar os dados em disco
+int inicializa_player_save(){
+
+    FILE* pPlayer = fopen("player.txt","w");
+
+    if(pPlayer==NULL){
+        printf("ERRO: Nao foi possivel criar player.txt!\n");
+        return 0;
+    }
+    fprintf(pPlayer,"Dia %d\n",0);
+    fprintf(pPlayer,"Dinheiro %.2f$\n", (float)DINHEIRO_INICIAL);
+    fprintf(pPlayer,"Hambúgueres: 0\n");
+    fprintf(pPlayer, "------------------------\n");
+
+
+    fclose(pPlayer);
+
+    return 1;
+}
+
+// Atualiza os dados em disco
+void atualiza_player_save(Jogador* J, int quant){
+
+    FILE* pPlayer = fopen("player.txt","a");
+
+    fprintf(pPlayer,"Dia %d\n",J->dia_atual);
+    fprintf(pPlayer,"Dinheiro %.2f$\n", J->dinheiro);
+    fprintf(pPlayer,"Hambúgueres: %d\n",quant);
+    fprintf(pPlayer, "------------------------\n");
+
+    fclose(pPlayer);
+}
+
 #endif
