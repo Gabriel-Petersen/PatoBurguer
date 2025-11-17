@@ -118,8 +118,8 @@ int main ()
         qtd_hamburgueres = inicio_de_dia(jog, &cardapio);
         #endif
         atualiza_player_save(jog, qtd_hamburgueres);
-        jog->dia_atual++;
         print_atualizacoes(jog, qtd_hamburgueres);
+        jog->dia_atual++;
 
         iniciar_loja(jog);
 

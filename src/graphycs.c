@@ -676,7 +676,7 @@ Pixel get_pixel_em(Screen* s, Vector2 pos)
 {
     Vector2 rel_pos = vector_sum(pos, centro_da_tela(s));
     if (vetor_valido_na_tela(s, rel_pos))
-        return s->pixeis[rel_pos.x][rel_pos.y]->topo->pixel;
+        return s->pixeis[rel_pos.y][rel_pos.x]->topo->pixel;
     else
     {
         moveCursor(new_Vector2(0, s->screen_size.y + 3));
@@ -1124,7 +1124,7 @@ void limpar_buffer(Screen* s)
 {
     for (int i = 0; i < s->screen_size.y; i++) for (int j = 0; j < s->screen_size.x; j++) 
     {
-            s->buffer[i][j] = COR_NULA;
+        s->buffer[i][j] = COR_NULA;
     }
 }
 
