@@ -10,6 +10,9 @@
         "cardapio.h": "c",
         "graphycs.h": "c",
         "graphycstxt.h": "c",
-        "hamburgueres.h": "c"
+        "hamburgueres.h": "c",
+        "audio.h": "c",
+        "miniaudio.h": "c",
+        "async.h": "c"
     }
 }

@@ -8,6 +8,7 @@
 #include"assets/piskel_molhos.h"
 #include"assets/fundo_loja.h"
 #include"jogador.h"
+#include"audio.h"
 
 #define POS_TITULO nv2(38, -12)
 #define POS_PRECO nv2(40, 13)
@@ -94,6 +95,8 @@ typedef struct{
 	Gerencia todo o fluxo da loja -> mostragem de itens, compra e venda, em cima de uma lista duplamente encadeada circular
 */
 void iniciar_loja(Jogador *J){
+	troca_tema_com_fade("tema2");
+
 	CenarioLoja cenario;
 	cenario.main_tela=criar_tela(nv2(131,31),criar_cor(93,0,0),50);
 	cenario.fundo_loja=criar_piskel_obj(fundo_loja_data[0],FUNDO_LOJA_FRAME_WIDTH,FUNDO_LOJA_FRAME_HEIGHT);
@@ -102,7 +105,7 @@ void iniciar_loja(Jogador *J){
 	print_rgb_txt(COLOR_CIANO, nv2(-1, -1), "Bem vindo à loja!\n");
 	printf("Aqui você pode comprar e vender ingredientes. Fique atento à sua quantidade de moedas, pois se elas acabarem você perde o jogo.\n");
 	printf("Boas compras!\n");
-	print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Aperte qualquer tecla para continuar\n");
+	print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Pressione ENTER para continuar\n");
 	getchar();
 	Lista_DE *I=criar_lista_de_ingredientes();
 	Nodo *p=I->ini;
@@ -139,6 +142,7 @@ void iniciar_loja(Jogador *J){
 				return;
 			case 'D':
 			case 'A':
+				audio_play("woosh", false);
 				esconder_objeto(cenario.main_tela,p->ant->info.obj);
 				esconder_objeto(cenario.main_tela,p->info.obj);
 				esconder_objeto(cenario.main_tela,p->prox->info.obj);
@@ -159,6 +163,7 @@ void iniciar_loja(Jogador *J){
 				teleportar_objeto(cenario.main_tela, p->info.preco, POS_PRECO);
 				break;
 			case 'C':
+				audio_play("cash", false);
 				if(J->dinheiro>=p->info.ing.valor){
 					J->dinheiro-=p->info.ing.valor;
 					//adiciona o ingrediente ao estoque
@@ -166,6 +171,7 @@ void iniciar_loja(Jogador *J){
 				else printf("\nDinheiro insuficiente");
 				break;
 			case 'V':
+				audio_play("cash", false);
 				//if(buscar_no_estoque(jogador->estoque,p->info.ing)==NULL)break;
 				J->dinheiro+=p->info.ing.valor;
 				//remove o ingrediente do estoque

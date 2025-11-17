@@ -1,5 +1,6 @@
 #define USE_SHORTCUTS
 #define INDEVMODE
+
 #include "montagem.h"
 #include "assets/logo.h"
 #include "loja.h"
@@ -72,9 +73,10 @@ void tela_inicial ()
     Obj fundo = criar_piskel_obj(logo_ini_data[0], LOGO_INI_FRAME_WIDTH, LOGO_INI_FRAME_HEIGHT);
     centralizar_objeto(fundo);
     desenhar_objeto(tela_inicio, fundo);
+    troca_tema_com_fade("tema1");
     render(tela_inicio, true);
     
-    print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Pressione qualquer coisa para começar a jogar!...\n");
+    print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Pressione ENTER para começar a jogar!...\n");
     getchar();
 
     esconder_objeto(tela_inicio, fundo);
@@ -97,10 +99,23 @@ void print_atualizacoes (Jogador* jog, int qtdh)
     print_rgb_txt(COLOR_ROXO, v, "%d\n\n", qtdh);
 }
 
+void load_audio ()
+{
+    audio_init();
+    audio_load("woosh", "../assets/soundtrack/woosh.mp3");
+    audio_load("tema1", "../assets/soundtrack/tema1.wav");
+    audio_set_volume("tema1", 20.0f);
+    audio_load("tema2", "../assets/soundtrack/tema2.wav");
+    audio_set_volume("tema2", 20.0f);
+    audio_load("cash", "../assets/soundtrack/register.mp3");
+    audio_load("punch", "../assets/soundtrack/soco.wav");
+    audio_set_volume("punch", 80.0f);
+}
 
 int main ()
 {
     setlocale(LC_CTYPE, "pt_BR.UTF-8");
+    load_audio();
     tela_inicial();
 
     Cardapio cardapio;
@@ -123,12 +138,13 @@ int main ()
 
         iniciar_loja(jog);
 
-        printf("Digite X para sair do jogo ou qualquer outra coisa para seguir para o próximo dia: ");
+        printf("Insira X para sair do jogo ou qualquer outra coisa para seguir para o próximo dia: ");
         char c;
         scanf(" %c", &c);
         if (c == 'X' || c == 'x')
         {
             jog = destruir_jogador(jog);
+            audio_shutdown();
             return 0;
         }
     }

@@ -1,5 +1,7 @@
 #define USE_SHORTCUTS
+
 #include "include/graphycs_all.h"
+#include "audio.h"
 #include "itens/cardapio.h"
 #include "estruturas_de_dados/fila_dinamica.h"
 #include "estruturas_de_dados/pilha.h"
@@ -8,6 +10,23 @@
 #include "assets/mcBackground.h"
 #include "assets/piskel_molhos.h"
 #include "jogador.h"
+
+void troca_tema_com_fade(char *novo_tema) {
+    char *tema_antigo = NULL;
+
+    if (strcmp(novo_tema, "tema1") == 0)
+        tema_antigo = "tema2";
+    else if (strcmp(novo_tema, "tema2") == 0) 
+        tema_antigo = "tema1";
+    
+    if (tema_antigo != NULL && audio_is_playing(tema_antigo)) 
+        audio_stop(tema_antigo);
+
+    audio_play(novo_tema, true); 
+    audio_set_volume(novo_tema, 0.0f); 
+
+    audio_fade_in(novo_tema, 1600, 0.0f, 20.0f);
+}
 
 Obj criar_frame_retangular (Vector2 size, Color cor)
 {
@@ -291,12 +310,10 @@ void mostrar_controles (Screen* atual)
 {
     moveCursor(nv2(0, atual->screen_size.y + 1));
     printf("Controles:\n");
-    printf("WASD: Mover | ");
-    printf("P: Pegar Ingrediente/Molho | ");
-    printf("O: Largar | ");
-    printf("C: Colocar no Prato | ");
-    printf("M: Entregar | ");
-    printf("X: Cardápio");
+    printf("WASD: Navegar/Mover | ");
+    printf("P: Colocar Ingrediente/Molho | ");
+    printf("M: Entregar Pedido | ");
+    printf("X: Abrir/Fechar Cardápio");
     moveCursor(VETOR_NULO);
 }
 
@@ -308,6 +325,7 @@ void mostrar_controles (Screen* atual)
 */
 bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int* qtd_hamburgueres)
 {
+    troca_tema_com_fade("tema1");
     *qtd_hamburgueres = 0;
     moveCursor(VETOR_NULO);
     system("cls");
@@ -363,6 +381,7 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
             float ganho = pedido_atual->valor * fator;
             jog->dinheiro += max(0, ganho);
             moveCursor(nv2(0, 34));
+            audio_play("cash", false);
             printf("Você enviou um hamburguer e ganhou %.2f/%.2f PatoCoin$!\n", ganho, pedido_atual->valor);
 
             inicializa_pilha(&montagem);
@@ -400,10 +419,12 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
                 uint32_t corHex = (id_ingrediente == 7) ? 0xffa5ffdd : 0xff051a45;
                 push(&montagem, c->ingredientes[id_ingrediente]);
                 aplicar_molho_visual(atual, hamburguer, converter_ABGR_para_Color(corHex));
+                audio_play("punch", false);
             }
             else 
             {
                 if (altura_pilha(&montagem) > 16) break;
+                audio_play("woosh", false);
                 Ingrediente novo_ing_data = c->ingredientes[id_ingrediente];
                 hamburguer = monta_ingrediente(atual, hamburguer, novo_ing_data, &montagem, prato_pos);
             }
@@ -424,10 +445,12 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
             }
             if (compare_vector(v, VETOR_DIREITA) && pagina < 8)
             {
+                audio_play("woosh", false);
                 pagina += 2;
             }
             else if (compare_vector(v, VETOR_ESQUERDA) && pagina > 0)
             {
+                audio_play("woosh", false);
                 pagina -= 2;
             }
 
@@ -465,7 +488,7 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
     if (t2 != NULL) {esconder_objeto(cenario.cd_tela, t2); excluir_objeto(t2);}
 
     printf("\nParabéns! Você entregou todos os pedidos!\n");
-    print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Pressione qualquer coisa para continuar!\n");
+    print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Pressione ENTER para continuar!\n");
     getchar();
     
     if (hamburguer->ref_node != NULL)
