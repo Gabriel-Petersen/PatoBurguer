@@ -66,7 +66,7 @@ Lista_DE* criar_lista_de_ingredientes ()
 		Item.titulo = criar_objeto_de_texto(1, 1, Item.ing.nome);
 		if (Item.titulo == NULL) printf("Titulo do item %s ficou nulo\n", Item.ing.nome); 
 		centralizar_objeto(Item.titulo);
-		somar_cor_obj(Item.titulo, COLOR_ROXO);
+		somar_cor_obj(Item.titulo, COLOR_AMARELO);
 		Obj ret;
 		ret = criar_retangulo_monocromatico(criar_cor(224, 255, 255), vector_sum(Item.titulo->size, nv2(5, 1)));
 		centralizar_objeto(ret);
@@ -75,7 +75,7 @@ Lista_DE* criar_lista_de_ingredientes ()
 		Item.preco = criar_objeto_de_texto(1, 1, "Custo! %.2f", Item.ing.valor);
 		if (Item.preco == NULL) printf("Titulo do item %s ficou nulo\n", Item.ing.nome); 
 		centralizar_objeto(Item.preco);
-		somar_cor_obj(Item.preco, COLOR_ROXO);
+		somar_cor_obj(Item.preco, COLOR_AMARELO);
 		ret = criar_retangulo_monocromatico(criar_cor(224, 255, 255), vector_sum(Item.preco->size, nv2(5, 1)));
 		centralizar_objeto(ret);
 		Item.preco = merge_objeto(Item.preco, ret, VETOR_NULO);

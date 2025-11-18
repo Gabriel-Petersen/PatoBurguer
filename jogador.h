@@ -26,6 +26,10 @@ Jogador* criar_novo_save ()
 // Passe o ponteiro para o arquivo de save ou NULL caso vá criar um novo save
 Jogador* inicializa_jogador (FILE* arquivo)
 {
+    #ifdef SEM_ARQUIVO_EXTERNO
+        return criar_novo_save();
+    #else
+
     if (arquivo == NULL)
     {
         return criar_novo_save();
@@ -35,6 +39,8 @@ Jogador* inicializa_jogador (FILE* arquivo)
         // Aqui chama a função para carregar um save a partir do arquivo passado como parâmetro
         return criar_novo_save();
     }
+
+    #endif
 }
 
 Jogador* destruir_jogador (Jogador* j)
@@ -48,7 +54,12 @@ Jogador* destruir_jogador (Jogador* j)
 // Cria o arquivo que vai salvar os dados em disco
 int inicializa_player_save(){
 
-    FILE* pPlayer = fopen("player.txt","w");
+    FILE* pPlayer;
+    #ifndef _VSCODE
+    pPlayer = fopen("player.txt","w");
+    #else
+    pPlayer = fopen("../player.txt","w");
+    #endif
 
     if(pPlayer==NULL){
         printf("ERRO: Nao foi possivel criar player.txt!\n");
@@ -68,7 +79,13 @@ int inicializa_player_save(){
 // Atualiza os dados em disco
 void atualiza_player_save(Jogador* J, int quant){
 
-    FILE* pPlayer = fopen("player.txt","a");
+    FILE* pPlayer;
+    
+    #ifndef _VSCODE
+    pPlayer = fopen("player.txt","a");
+    #else
+    pPlayer = fopen("../player.txt","a");
+    #endif
 
     fprintf(pPlayer,"Dia %d\n",J->dia_atual);
     fprintf(pPlayer,"Dinheiro %.2f$\n", J->dinheiro);

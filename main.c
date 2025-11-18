@@ -1,5 +1,8 @@
 #define USE_SHORTCUTS
 #define INDEVMODE
+//#define SEM_MONTAGEM
+//#define SEM_ARQUIVO_EXTERNO
+#define _VSCODE
 
 #include "montagem.h"
 #include "assets/logo.h"
@@ -14,10 +17,9 @@ int qtd_clientes (int qtd_dias)
 {
     
     #ifdef INDEVMODE
-    return qtd_dias;
+        return qtd_dias;
     #else
-    // sla fórmula aleatória
-    return qtd_dias + 2;
+        return qtd_dias + 2;
     #endif
 }
 
@@ -102,13 +104,21 @@ void print_atualizacoes (Jogador* jog, int qtdh)
 void load_audio ()
 {
     audio_init();
-    audio_load("woosh", "../assets/soundtrack/woosh.mp3");
-    audio_load("tema1", "../assets/soundtrack/tema1.wav");
+
+    char* path;
+    #ifdef _VSCODE
+        path = "../"; // no vscode o executável fica numa pasta output. Então precisamos subir uma pasta
+    #else 
+        path = "";
+    #endif
+
+    audio_load("woosh", strcat(path, "assets/soundtrack/woosh.mp3"));
+    audio_load("tema1", strcat(path, "assets/soundtrack/tema1.wav"));
     audio_set_volume("tema1", 20.0f);
-    audio_load("tema2", "../assets/soundtrack/tema2.wav");
+    audio_load("tema2", strcat(path, "assets/soundtrack/tema2.wav"));
     audio_set_volume("tema2", 20.0f);
-    audio_load("cash", "../assets/soundtrack/register.mp3");
-    audio_load("punch", "../assets/soundtrack/soco.wav");
+    audio_load("cash", strcat(path, "assets/soundtrack/register.mp3"));
+    audio_load("punch", strcat(path, "assets/soundtrack/soco.wav"));
     audio_set_volume("punch", 80.0f);
 }
 
@@ -122,17 +132,27 @@ int main ()
     // INICIALIZANDO SEM VERIFICAR ARQUIVO DE SAVE-GAME (Futuro)
     Jogador* jog = inicializa_jogador(NULL);
     inicializa_cardapio(&cardapio);
-    if(inicializa_player_save()==0) return 0;
+
+    #ifndef SEM_ARQUIVO_EXTERNO
+        if(inicializa_player_save()==0) return 0;
+    #else
+        printf("Build sem arquivo externo. Verifique se sua maquina aceita e, se sim, recompile.\n");
+    #endif
 
     while (true)
     {
         int qtd_hamburgueres;
-        #ifdef SEMMONTAGEM
-        qtd_hamburgueres=0;
+
+        #ifdef SEM_MONTAGEM
+            qtd_hamburgueres=0;
         #else
-        qtd_hamburgueres = inicio_de_dia(jog, &cardapio);
+            qtd_hamburgueres = inicio_de_dia(jog, &cardapio);
         #endif
-        atualiza_player_save(jog, qtd_hamburgueres);
+
+        #ifndef SEM_ARQUIVO_EXTERNO
+            atualiza_player_save(jog, qtd_hamburgueres);
+        #endif
+
         print_atualizacoes(jog, qtd_hamburgueres);
         jog->dia_atual++;
 
