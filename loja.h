@@ -111,14 +111,20 @@ void iniciar_loja(Jogador *J){
 			case 'C':
 				if(J->dinheiro>=p->info.ing.valor){
 					J->dinheiro-=p->info.ing.valor;
-					//adiciona o ingrediente ao estoque
+					tp_item_arvore item;
+					item.ing_id=p->info.ing.id;
+					Nodo *n=busca(J->estoque,item);
+					n->info.qtd++;
 				}
 				else printf("\nDinheiro insuficiente");
 				break;
 			case 'V':
-				//if(buscar_no_estoque(jogador->estoque,p->info.ing)==NULL)break;
+				tp_item_arvore item;
+				item.ing_id=p->info.ing.id;
+				Nodo *n=busca(J->estoque,item);
+				if(n->info.qtd==0)break;
 				J->dinheiro+=p->info.ing.valor;
-				//remove o ingrediente do estoque
+				n->info.qtd--;
 				break;
 		}
 	}
