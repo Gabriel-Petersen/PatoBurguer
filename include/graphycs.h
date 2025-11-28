@@ -251,6 +251,11 @@ Screen* criar_tela(Vector2 tamanho, Color fundo, int limiar_de_cor);
  */
 void mover_tela (Screen* s, Vector2 direction);
 /**
+ * @brief Limpa o buffer da tela. Essencial para multitelas
+ * @param s Ponteiro para a tela.
+ */
+void limpar_buffer(Screen* s);
+/**
  * @brief Preenche toda a tela com uma cor de fundo.
  * @param s Ponteiro para a tela.
  * @param cor Cor de preenchimento.

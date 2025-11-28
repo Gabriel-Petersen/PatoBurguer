@@ -414,14 +414,17 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
             
             int id_ingrediente = cenario.grid->atu->ing_id;
 
-            if (id_ingrediente == 7 || id_ingrediente == 8)
+            // de toda forma, id_ingrediente já é definido aqui. Pode fazer um if na quantidade e, se for false, chama "break"
+            // se for true, pode debitar do estoque aqui mesmo
+
+            if (id_ingrediente == 7 || id_ingrediente == 8) // se é um molho
             {
                 uint32_t corHex = (id_ingrediente == 7) ? 0xffa5ffdd : 0xff051a45;
                 push(&montagem, c->ingredientes[id_ingrediente]);
                 aplicar_molho_visual(atual, hamburguer, converter_ABGR_para_Color(corHex));
                 audio_play("punch", false);
             }
-            else 
+            else // se é ingrediente normal
             {
                 if (altura_pilha(&montagem) > 16) break;
                 audio_play("woosh", false);
@@ -438,11 +441,6 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
         }
         else
         {
-            if (input == 'G')
-            {
-                esconder_objeto(cenario.cd_tela, t1);
-                esconder_objeto(cenario.cd_tela, t2);
-            }
             if (compare_vector(v, VETOR_DIREITA) && pagina < 8)
             {
                 audio_play("woosh", false);

@@ -105,20 +105,22 @@ void load_audio ()
 {
     audio_init();
 
-    char* path;
     #ifdef _VSCODE
-        path = "../"; // no vscode o executável fica numa pasta output. Então precisamos subir uma pasta
-    #else 
-        path = "";
+        audio_load("woosh", "../assets/soundtrack/woosh.mp3");
+        audio_load("tema1", "../assets/soundtrack/tema1.wav");
+        audio_load("tema2", "../assets/soundtrack/tema2.wav");
+        audio_load("cash", "../assets/soundtrack/register.mp3");
+        audio_load("punch", "../assets/soundtrack/soco.wav");
+    #else
+        audio_load("woosh", "assets/soundtrack/woosh.mp3");
+        audio_load("tema1", "assets/soundtrack/tema1.wav");
+        audio_load("tema2", "assets/soundtrack/tema2.wav");
+        audio_load("cash", "assets/soundtrack/register.mp3");
+        audio_load("punch", "assets/soundtrack/soco.wav");
     #endif
 
-    audio_load("woosh", strcat(path, "assets/soundtrack/woosh.mp3"));
-    audio_load("tema1", strcat(path, "assets/soundtrack/tema1.wav"));
     audio_set_volume("tema1", 20.0f);
-    audio_load("tema2", strcat(path, "assets/soundtrack/tema2.wav"));
     audio_set_volume("tema2", 20.0f);
-    audio_load("cash", strcat(path, "assets/soundtrack/register.mp3"));
-    audio_load("punch", strcat(path, "assets/soundtrack/soco.wav"));
     audio_set_volume("punch", 80.0f);
 }
 

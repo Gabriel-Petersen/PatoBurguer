@@ -282,10 +282,7 @@ void mover_tela (Screen* s, Vector2 direction)
         atual = atual->prox;
     }
 
-    for (int i = 0; i < s->screen_size.y; i++) for (int j = 0; j < s->screen_size.x; j++)
-    {
-        s->buffer[i][j] = COR_NULA;
-    }
+    limpar_buffer(s);
 }
 
 Vector2 get_abs_pixel_pos (Objeto* obj, int index)
@@ -674,7 +671,7 @@ bool obj_contem_pixel_em (Objeto* obj, Vector2 pos)
 
 Pixel get_pixel_em(Screen* s, Vector2 pos)
 {
-    Vector2 rel_pos = vector_sum(pos, centro_da_tela(s));
+    Vector2 rel_pos = vector_subtr(vector_sum(pos, centro_da_tela(s)), s->position);
     if (vetor_valido_na_tela(s, rel_pos))
         return s->pixeis[rel_pos.y][rel_pos.x]->topo->pixel;
     else
