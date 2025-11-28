@@ -3,18 +3,38 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "estruturas_de_dados/abb.h"
 
 #define DINHEIRO_INICIAL 100
 typedef struct {
     char nome[30];
     float dinheiro;
     int dia_atual;
-    //RBTree* estoque;
+    Arvore estoque;
 } Jogador;
-
+void inicializa_estoque(Jogador **j){
+	(*j)->estoque=inicializa_arvore();
+	inserir(&(*j)->estoque,(tp_item_arvore){7,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){3,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){1,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){5,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){0,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){2,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){4,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){6,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){9,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){8,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){11,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){10,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){12,0});
+	return;
+}
 Jogador* criar_novo_save ()
 {
     Jogador* j = (Jogador*)malloc(sizeof(Jogador));
+    
+    inicializa_estoque(&j);
+    
     j->dinheiro = DINHEIRO_INICIAL;
     j->dia_atual = 1;
 
@@ -45,7 +65,7 @@ Jogador* inicializa_jogador (FILE* arquivo)
 
 Jogador* destruir_jogador (Jogador* j)
 {
-    // destruir_arvore (j->estoque);
+    destruir_arvore(j->estoque);
     free(j);
     j = NULL;
     return j;

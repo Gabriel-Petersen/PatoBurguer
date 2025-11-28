@@ -108,7 +108,7 @@ void iniciar_loja(Jogador *J){
 	print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Pressione ENTER para continuar\n");
 	getchar();
 	Lista_DE *I=criar_lista_de_ingredientes();
-	Nodo *p=I->ini;
+	NodoLista *p=I->ini;
 	teleportar_objeto(cenario.main_tela,p->ant->info.obj,nv2(-27,0));
 	teleportar_objeto(cenario.main_tela,p->info.obj,nv2(0,-5));
 	teleportar_objeto(cenario.main_tela,p->prox->info.obj,nv2(27,0));
@@ -128,7 +128,7 @@ void iniciar_loja(Jogador *J){
 				esconder_objeto(cenario.main_tela,p->info.obj);
 				esconder_objeto(cenario.main_tela, p->info.titulo);
 				esconder_objeto(cenario.main_tela, p->info.preco);
-				Nodo* atu = I->ini;
+				NodoLista* atu = I->ini;
 				for(int i=0;i<QTD_INGREDIENTES;i++, atu=atu->prox){
 					excluir_objeto(atu->info.obj);
 					excluir_objeto(atu->info.titulo);
@@ -166,15 +166,21 @@ void iniciar_loja(Jogador *J){
 				audio_play("cash", false);
 				if(J->dinheiro>=p->info.ing.valor){
 					J->dinheiro-=p->info.ing.valor;
-					//adiciona o ingrediente ao estoque
+					tp_item_arvore item;
+					item.ing_id=p->info.ing.id;
+					Nodo *n=busca(J->estoque,item);
+					n->info.qtd++;
 				}
 				else printf("\nDinheiro insuficiente");
 				break;
 			case 'V':
 				audio_play("cash", false);
-				//if(buscar_no_estoque(jogador->estoque,p->info.ing)==NULL)break;
+				tp_item_arvore item;
+				item.ing_id=p->info.ing.id;
+				Nodo *n=busca(J->estoque,item);
+				if(n->info.qtd==0)break;
 				J->dinheiro+=p->info.ing.valor;
-				//remove o ingrediente do estoque
+				n->info.qtd--;
 				break;
 		}
 	}

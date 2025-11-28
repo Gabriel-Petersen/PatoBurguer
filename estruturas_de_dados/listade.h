@@ -16,25 +16,25 @@ Objeto* preco;
 
 typedef ItemDaLista tp_item_lista_DE;
 
-void custom_print(tp_item_lista_DE x)
+void custom_print_lista(tp_item_lista_DE x)
 {
 	printf("%s ", x.ing.nome);
 }
 
-bool custom_comp (tp_item_lista_DE a, tp_item_lista_DE b)
+bool custom_comp_lista (tp_item_lista_DE a, tp_item_lista_DE b)
 {
 	return a.ing.id==b.ing.id;
 }
 
-typedef struct Nodo {
+typedef struct NodoLista {
 	tp_item_lista_DE info;
-	struct Nodo* ant;
-	struct Nodo* prox;
-} Nodo;
+	struct NodoLista* ant;
+	struct NodoLista* prox;
+} NodoLista;
 
 typedef struct {
-	Nodo* ini;
-	Nodo* fim;
+	NodoLista* ini;
+	NodoLista* fim;
 	int tam;
 } Lista_DE;
 
@@ -51,9 +51,9 @@ Lista_DE* inicializa_lista ()
 	return l;
 }
 
-Nodo* node_alloc ()
+NodoLista* nodo_alloc ()
 {
-	return (Nodo*)malloc(sizeof(Nodo));
+	return (NodoLista*)malloc(sizeof(NodoLista));
 }
 
 bool lista_vazia (Lista_DE* l)
@@ -63,7 +63,7 @@ bool lista_vazia (Lista_DE* l)
 
 bool insere_fim (Lista_DE* l, tp_item_lista_DE x)
 {
-	Nodo* novo = node_alloc();
+	NodoLista* novo = nodo_alloc();
 	if (novo == NULL) return false;
 	novo->info = x;
 	novo->prox = NULL;
@@ -87,8 +87,8 @@ bool remover (Lista_DE* l, tp_item_lista_DE x)
 {
 	if (lista_vazia(l)) return false;
 	
-	Nodo* atual = l->ini;
-	while (atual != NULL && !custom_comp(atual->info,x)) atual = atual->prox;
+	NodoLista* atual = l->ini;
+	while (atual != NULL && !custom_comp_lista(atual->info,x)) atual = atual->prox;
 	if (atual == NULL) return false;
 	
 	if (l->tam == 1)
@@ -118,17 +118,17 @@ bool remover (Lista_DE* l, tp_item_lista_DE x)
     return true;
 }
 
-Nodo* buscar_item (Lista_DE* l, tp_item_lista_DE x)
+NodoLista* buscar_item (Lista_DE* l, tp_item_lista_DE x)
 {
 	if (lista_vazia(l)) return NULL;
-	Nodo* atual = l->ini;
-	while (atual != NULL && !custom_comp(atual->info,x)) atual = atual->prox;
+	NodoLista* atual = l->ini;
+	while (atual != NULL && !custom_comp_lista(atual->info,x)) atual = atual->prox;
 	return atual;
 }
 
 Lista_DE* destruir_lista (Lista_DE* l)
 {
-	Nodo* atual = l->ini;
+	NodoLista* atual = l->ini;
 	while (atual != NULL)
 	{
 		l->ini =atual->prox;
@@ -141,10 +141,10 @@ Lista_DE* destruir_lista (Lista_DE* l)
 
 void imprime_lista(Lista_DE* l)
 {
-    Nodo* atual = l->ini;
+    NodoLista* atual = l->ini;
     while (atual != NULL)
     {
-        custom_print(atual->info);
+        custom_print_lista(atual->info);
         atual = atual->prox;
     }
     printf("\n");
