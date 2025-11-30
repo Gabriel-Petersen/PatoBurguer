@@ -51,7 +51,7 @@ Lista_DE* inicializa_lista ()
 	return l;
 }
 
-NodoLista* nodo_alloc ()
+NodoLista* nodo_alloc_lista ()
 {
 	return (NodoLista*)malloc(sizeof(NodoLista));
 }
@@ -63,7 +63,7 @@ bool lista_vazia (Lista_DE* l)
 
 bool insere_fim (Lista_DE* l, tp_item_lista_DE x)
 {
-	NodoLista* novo = nodo_alloc();
+	NodoLista* novo = nodo_alloc_lista();
 	if (novo == NULL) return false;
 	novo->info = x;
 	novo->prox = NULL;

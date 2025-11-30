@@ -5,62 +5,51 @@
 #include <stdlib.h>
 #include "estruturas_de_dados/abb.h"
 
-#define DINHEIRO_INICIAL 100
+typedef struct{
+    int id;
+    int quantidade;
+} quant_bur;
+
+#define QTD_ING_INICIAL 4
 typedef struct {
-    char nome[30];
     float dinheiro;
     int dia_atual;
+    quant_bur itens_vendidos[10];
     Arvore estoque;
 } Jogador;
 void inicializa_estoque(Jogador **j){
 	(*j)->estoque=inicializa_arvore();
-	inserir(&(*j)->estoque,(tp_item_arvore){7,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){3,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){1,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){5,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){0,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){2,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){4,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){6,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){9,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){8,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){11,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){10,0});
-	inserir(&(*j)->estoque,(tp_item_arvore){12,0});
+	inserir(&(*j)->estoque,(tp_item_arvore){7,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){3,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){1,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){5,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){0,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){2,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){4,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){6,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){9,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){8,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){11,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){10,QTD_ING_INICIAL});
+	inserir(&(*j)->estoque,(tp_item_arvore){12,QTD_ING_INICIAL});
 	return;
 }
-Jogador* criar_novo_save ()
+
+Jogador* inicializa_jogador (int dinheiro_inicial)
 {
     Jogador* j = (Jogador*)malloc(sizeof(Jogador));
     
     inicializa_estoque(&j);
     
-    j->dinheiro = DINHEIRO_INICIAL;
+    j->dinheiro = dinheiro_inicial;
     j->dia_atual = 1;
 
-    // Pode pedir para ele digitar o nome dele ou sla
+    for(int i=0;i<10;i++){
+        j->itens_vendidos[i].id = i;
+        j->itens_vendidos[i].quantidade = 0;
+    };
 
     return j;
-}
-
-// Passe o ponteiro para o arquivo de save ou NULL caso vá criar um novo save
-Jogador* inicializa_jogador (FILE* arquivo)
-{
-    #ifdef SEM_ARQUIVO_EXTERNO
-        return criar_novo_save();
-    #else
-
-    if (arquivo == NULL)
-    {
-        return criar_novo_save();
-    }
-    else
-    {
-        // Aqui chama a função para carregar um save a partir do arquivo passado como parâmetro
-        return criar_novo_save();
-    }
-
-    #endif
 }
 
 Jogador* destruir_jogador (Jogador* j)
@@ -72,7 +61,7 @@ Jogador* destruir_jogador (Jogador* j)
 }
 
 // Cria o arquivo que vai salvar os dados em disco
-int inicializa_player_save(){
+int inicializa_player_save(int dinheiro_inicial){
 
     FILE* pPlayer;
     #ifndef _VSCODE
@@ -86,7 +75,7 @@ int inicializa_player_save(){
         return 0;
     }
     fprintf(pPlayer,"Dia %d\n",0);
-    fprintf(pPlayer,"Dinheiro %.2f$\n", (float)DINHEIRO_INICIAL);
+    fprintf(pPlayer,"Dinheiro %.2f$\n", (float)dinheiro_inicial);
     fprintf(pPlayer,"Hambúgueres: 0\n");
     fprintf(pPlayer, "------------------------\n");
 

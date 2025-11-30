@@ -794,12 +794,13 @@ void trocar_cor_texto (Objeto* txt_obj, Color nova_cor);
 
 /**
  * @brief Realiza printf para escrever um texto no terminal dada uma cor e posição
+ * @param s Se o texto sobrepõe uma tela, passea. Senão, use NULL
  * @param cor_do_texto A cor do texto que será printado
  * @param pos A posição do texto na tela, 1-indexado com referencial de matriz. Note que (-1, -1) não alterará a posição do cursor
  * @param format O texto formatado a ser printado
  * @note Para fazer o print no mesmo lugar onde o cursor já está, passe o vetor como (-1, -1)
  */
-void print_rgb_txt(Color cor_do_texto, Vector2 pos, const char *format, ...);
+void print_rgb_txt(Screen* s, Color cor_do_texto, Vector2 pos, const char *format, ...);
 /** @} */
 
 /**

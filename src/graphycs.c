@@ -994,12 +994,18 @@ void preencher_background (Screen* s, Color cor)
             add_pixel(s->pixeis[i][j], criar_pixel(cor, new_Vector2(i, j)));
 }
 
-
-void print_rgb_txt(Color cor_do_texto, Vector2 pos, const char *format, ...) 
+void print_rgb_txt(Screen* s, Color cor_do_texto, Vector2 pos, const char *format, ...) 
 {
     if (!compare_vector(pos, new_Vector2(-1, -1)))
         moveCursor(pos);
-    printf("\033[38;2;%d;%d;%dm", cor_do_texto.r, cor_do_texto.g, cor_do_texto.b);
+    if (s == NULL)
+        printf("\033[38;2;%d;%d;%dm", cor_do_texto.r, cor_do_texto.g, cor_do_texto.b);
+    else
+    {
+        Color fundo = s->buffer[pos.y][pos.x];
+        printf("\033[38;2;%d;%d;%dm", cor_do_texto.r, cor_do_texto.g, cor_do_texto.b);
+        printf("\033[48;2;%d;%d;%dm", fundo.r, fundo.g, fundo.b);
+    }
     va_list args;
     va_start(args, format);
     vprintf(format, args);

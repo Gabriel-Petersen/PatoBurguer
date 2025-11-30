@@ -6,6 +6,7 @@
 #include "estruturas_de_dados/fila_dinamica.h"
 #include "estruturas_de_dados/pilha.h"
 #include "estruturas_de_dados/grid_encadeado.h"
+#include "estruturas_de_dados/abb.h"
 #include "assets/piskel_ingredientes.h"
 #include "assets/mcBackground.h"
 #include "assets/piskel_molhos.h"
@@ -95,25 +96,63 @@ bool esta_na_area_de_drop(Vector2 prato_pos, Objeto* cursor)
     return (dist.x <= drop_area.x && dist.y <= drop_area.y);
 }
 
-void render_com_texto (Screen* tela, bool no_cardapio)
+int get_qtd_ing(Arvore estoque, int ing_id)
+{
+    Nodo* n = busca(estoque, (tp_item_arvore){ing_id, 0});
+    if (n == NULL)
+    {
+        printf("ERRO! BUSCANDO INGREDIENTE NÃO INDEXADO\n");
+        return -1;
+    }
+    return n->info.qtd;
+}
+
+void print_qtd(Screen* tela, Vector2 pos, int qtd)
+{
+    print_rgb_txt(tela, COLOR_PRETO, pos, (qtd < 10 ? " x%d" : "x%d"), qtd);
+}
+
+void render_com_texto (Screen* tela, bool no_cardapio, Arvore estoque)
 {
     render (tela, true);
 
     if (no_cardapio) return;
 
-    print_rgb_txt(COLOR_VERDE, nv2(3, 3), "Topo de Pão");
-    print_rgb_txt(COLOR_VERDE, nv2(6, 9), "Carne");
-    print_rgb_txt(COLOR_VERDE, nv2(6, 15), "Bacon");
-    print_rgb_txt(COLOR_VERDE, nv2(5, 21), "Queijo");
-    print_rgb_txt(COLOR_VERDE, nv2(4, 27), "Ovo Frito");
+    print_rgb_txt(tela, COLOR_VERDE, nv2(3, 3), "Topo de Pão");
+    print_qtd(tela, nv2(2, 1), get_qtd_ing(estoque, 0));
 
-    print_rgb_txt(COLOR_VERDE, nv2(60, 2), "Base de Pão");
+    print_rgb_txt(tela, COLOR_VERDE, nv2(6, 9), "Carne");
+    print_qtd(tela, nv2(2, 7), get_qtd_ing(estoque, 2));
 
-    print_rgb_txt(COLOR_VERDE, nv2(119, 3), "Alface");
-    print_rgb_txt(COLOR_VERDE, nv2(119, 9), "Tomate");
-    print_rgb_txt(COLOR_VERDE, nv2(119, 15), "Cebola");
-    print_rgb_txt(COLOR_VERDE, nv2(119, 21), "Picles");
-    print_rgb_txt(COLOR_VERDE, nv2(117, 27), "Onion Rings");
+    print_rgb_txt(tela, COLOR_VERDE, nv2(6, 15), "Bacon");
+    print_qtd(tela, nv2(2, 13), get_qtd_ing(estoque, 3));
+
+    print_rgb_txt(tela, COLOR_VERDE, nv2(5, 21), "Queijo");
+    print_qtd(tela, nv2(2, 19), get_qtd_ing(estoque, 4));
+
+    print_rgb_txt(tela, COLOR_VERDE, nv2(4, 27), "Ovo Frito");
+    print_qtd(tela, nv2(2, 25), get_qtd_ing(estoque, 11));
+
+    print_rgb_txt(tela, COLOR_VERDE, nv2(60, 2), "Base de Pão");
+    print_qtd(tela, nv2(64, 0), get_qtd_ing(estoque, 1));
+
+    print_rgb_txt(tela, COLOR_VERDE, nv2(119, 3), "Alface");
+    print_qtd(tela, nv2(126, 1), get_qtd_ing(estoque, 5));
+
+    print_rgb_txt(tela, COLOR_VERDE, nv2(119, 9), "Tomate");
+    print_qtd(tela, nv2(126, 7), get_qtd_ing(estoque, 6));
+
+    print_rgb_txt(tela, COLOR_VERDE, nv2(119, 15), "Cebola");
+    print_qtd(tela, nv2(126, 13), get_qtd_ing(estoque, 9));
+
+    print_rgb_txt(tela, COLOR_VERDE, nv2(119, 21), "Picles");
+    print_qtd(tela, nv2(126, 19), get_qtd_ing(estoque, 10));
+
+    print_rgb_txt(tela, COLOR_VERDE, nv2(117, 27), "Onion Rings");
+    print_qtd(tela, nv2(126, 25), get_qtd_ing(estoque, 12));
+
+    print_qtd(tela, nv2(29, 24), get_qtd_ing(estoque, 7));
+    print_qtd(tela, nv2(99, 24), get_qtd_ing(estoque, 8));
 }
 
 bool navega_grid (Screen* atual, GridEncadeado* g, Obj* highlight, Vector2 direcao)
@@ -261,7 +300,7 @@ Obj monta_ingrediente (Screen* atual, Obj hamburguer, Ingrediente novo_ing_data,
     esconder_objeto(atual, ingrediente);
     
     ingrediente->position.x = hamburguer->position.x;
-    int bonus = 2*(novo_ing_data.id == PAO_CIMA.id);
+    int bonus = novo_ing_data.id == PAO_CIMA.id;
     ingrediente->position.y = hamburguer->position.y - hamburguer->size.y + 1 - bonus;
     Vector2 offset = vector_subtr(hamburguer->position, ingrediente->position);
 
@@ -288,7 +327,7 @@ void limpar_area_receita(Screen* tela_cardapio)
     moveCursor(VETOR_NULO);
 }
 
-void print_receita (tp_pilha receita, int x0)
+void print_receita (Screen* tela, tp_pilha receita, int x0)
 {
     Ingrediente i;
     int y0 = 10;
@@ -296,7 +335,7 @@ void print_receita (tp_pilha receita, int x0)
     for (int num = 0; pilha_vazia(&receita) == false; num++)
     {
         pop(&receita, &i);
-        print_rgb_txt(COLOR_BRANCO, nv2(x0, y0), "%d - %s", tam-num, i.nome);
+        print_rgb_txt(tela, COLOR_BRANCO, nv2(x0, y0), "%d - %s", tam-num, i.nome);
         y0 += 2;
         if (num == 8)
         {
@@ -315,6 +354,16 @@ void mostrar_controles (Screen* atual)
     printf("M: Entregar Pedido | ");
     printf("X: Abrir/Fechar Cardápio");
     moveCursor(VETOR_NULO);
+}
+
+void trocar_ingrediente (Screen* main_tela, Obj* hamburguer, const Vector2 prato_pos)
+{
+    esconder_objeto(main_tela, *hamburguer);
+    excluir_objeto(*hamburguer);
+    *hamburguer = criar_piskel_obj(ingredientes_data[1], INGREDIENTES_FRAME_WIDTH, INGREDIENTES_FRAME_HEIGHT);
+    centralizar_objeto(*hamburguer);
+    alterar_pivot_obj(*hamburguer, nv2(0, (*hamburguer)->size.y/2));
+    teleportar_objeto(main_tela, *hamburguer, prato_pos);
 }
 
 /*
@@ -352,13 +401,49 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
 
     while (fila_vazia(fila_de_pedidos) == false)
     {
-        render_com_texto(atual, no_cardapio);
+        render_com_texto(atual, no_cardapio, jog->estoque);
         mostrar_controles(atual);
 
         char input = ler_teclado();
         #ifdef INDEVMODE
             if (input == 'T') break;
         #endif
+
+        if (input == 'M')  // Envia o ingrediente ao cliente
+        {
+            *qtd_hamburgueres += 1;
+            jog->itens_vendidos[pedido_atual->id].quantidade++;
+            int alt = altura_pilha(&(pedido_atual->receita));
+            float fator = (float)((float)alt - compara_pilhas(montagem, pedido_atual->receita))/alt;
+            float ganho = pedido_atual->valor * fator;
+            jog->dinheiro += ganho;
+            moveCursor(nv2(0, 34));
+            audio_play("cash", false);
+            if (ganho > 0)
+                printf("Você enviou um hamburguer e ganhou %.2f/%.2f PatoCoin$!\n", ganho, pedido_atual->valor);
+            else
+                printf("Seu pedido saiu tão errado e o cliente ficou tão instatisfeito que você perdeu %.2f PatoCoin$s :(\n", ganho);
+            
+            if (jog->dinheiro < 0)
+                break;
+
+            inicializa_pilha(&montagem);
+            push(&montagem, PAO_BAIXO);
+
+            trocar_ingrediente(cenario.main_tela, &hamburguer, prato_pos);
+
+            moveCursor(nv2(0, 3+atual->screen_size.y));
+            dequeue(fila_de_pedidos, &hamb_id);
+            if (front(fila_de_pedidos, &hamb_id))
+                pedido_atual = c->hamburgueres[hamb_id];
+            
+            if (pedido_atual != NULL) // Se ainda tem pedidos a fazer
+            {
+                if (jog->estoque == NULL) break;
+                Nodo* nodo = busca(jog->estoque, (tp_item_arvore){1, 0});
+                if (nodo->info.qtd-- <= 0) break; // GameOver!!! Sem mais bases de pão
+            }
+        }
 
         switch (toupper(input))
         {
@@ -374,48 +459,14 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
             if (!no_cardapio) pagina_antiga = -1;
             continue;
 
-        case 'M': // Envia o ingrediente ao cliente
-            *qtd_hamburgueres += 1;
-            int alt = altura_pilha(&(pedido_atual->receita));
-            float fator = (float)((float)alt - compara_pilhas(montagem, pedido_atual->receita))/alt;
-            float ganho = pedido_atual->valor * fator;
-            jog->dinheiro += max(0, ganho);
-            moveCursor(nv2(0, 34));
-            audio_play("cash", false);
-            printf("Você enviou um hamburguer e ganhou %.2f/%.2f PatoCoin$!\n", ganho, pedido_atual->valor);
-
-            inicializa_pilha(&montagem);
-            push(&montagem, PAO_BAIXO);
-
-            esconder_objeto(cenario.main_tela, hamburguer);
-            excluir_objeto(hamburguer);
-            hamburguer = criar_piskel_obj(ingredientes_data[1], INGREDIENTES_FRAME_WIDTH, INGREDIENTES_FRAME_HEIGHT);
-            centralizar_objeto(hamburguer);
-            alterar_pivot_obj(hamburguer, nv2(0, hamburguer->size.y/2));
-            teleportar_objeto(cenario.main_tela, hamburguer, prato_pos);
-
-            moveCursor(nv2(0, 3+atual->screen_size.y));
-            dequeue(fila_de_pedidos, &hamb_id);
-            if (front(fila_de_pedidos, &hamb_id))
-                pedido_atual = c->hamburgueres[hamb_id];
-            
-            if (pedido_atual != NULL) // Se ainda tem pedidos a fazer
-            {
-                /*
-                    if (jog->estoque == NULL) return false; // GameOver!!! Sem ingredientes para fazer pedidos!
-                    int qtd = buscar(jog->estoque, PAO_BAIXO);
-                    if (qtd <= 0) return false; // GameOver!!! Sem mais bases de pão
-                */
-            }
-            break;
-
         case 'P':
             if (no_cardapio) break;
             
             int id_ingrediente = cenario.grid->atu->ing_id;
-
-            // de toda forma, id_ingrediente já é definido aqui. Pode fazer um if na quantidade e, se for false, chama "break"
-            // se for true, pode debitar do estoque aqui mesmo
+		
+            Nodo *n=busca(jog->estoque,(tp_item_arvore){id_ingrediente,0});
+            if(n->info.qtd==0)break;
+            n->info.qtd--;
 
             if (id_ingrediente == 7 || id_ingrediente == 8) // se é um molho
             {
@@ -474,20 +525,28 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
                 teleportar_objeto(cenario.cd_tela, t1, nv2(-55, -11));
                 teleportar_objeto(cenario.cd_tela, t2, nv2(11, -11));
 
-                render_com_texto(atual, no_cardapio);
-                print_receita(c->hamburgueres[pagina]->receita, 11);
-                print_receita(c->hamburgueres[pagina+1]->receita, 75);
+                render_com_texto(cenario.cd_tela, no_cardapio, jog->estoque);
+                print_receita(cenario.cd_tela, c->hamburgueres[pagina]->receita, 11);
+                print_receita(cenario.cd_tela, c->hamburgueres[pagina+1]->receita, 75);
             }
             pagina_antiga = pagina;
         }
     }
 
+    bool result = fila_vazia(fila_de_pedidos);
+    if (result)
+        printf("Parabéns! Você entregou todos os pedidos!\n");
+    else
+        if (jog->dinheiro < 0)
+            printf("É uma pena... Você ficou no vermelho. Não tem dinheiro para pagar Sanval pelo alvará da loja e nem para pagar a Soussa os direitos autorais pelas receitas.\n");
+        else
+            printf("É uma pena... Você não tem mais ingredientes para continuar.\n");
+    
+    print_rgb_txt(NULL, COLOR_AMARELO, nv2(-1, -1), "Pressione ENTER para continuar!\n");
+    getchar();
+    
     if (t1 != NULL) {esconder_objeto(cenario.cd_tela, t1); excluir_objeto(t1);}
     if (t2 != NULL) {esconder_objeto(cenario.cd_tela, t2); excluir_objeto(t2);}
-
-    printf("\nParabéns! Você entregou todos os pedidos!\n");
-    print_rgb_txt(COLOR_AMARELO, nv2(-1, -1), "Pressione ENTER para continuar!\n");
-    getchar();
     
     if (hamburguer->ref_node != NULL)
     {
@@ -497,5 +556,5 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
     excluir_objeto(hamburguer);
     limpa_cenario_montagem(cenario);
 
-    return fila_vazia(fila_de_pedidos);
+    return result;
 }

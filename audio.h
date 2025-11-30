@@ -48,8 +48,8 @@ static void audio_init(void) {
  * @param alias     Nome único para a faixa.
  * @param filename  Caminho para o arquivo de áudio.
  */
-static void audio_load(const char *alias, const char *filename) {
-    if (track_count >= MAX_TRACKS) return;
+static int audio_load(const char *alias, const char *filename) {
+    if (track_count >= MAX_TRACKS) return 0;
     Track *t = &tracks[track_count++];
     strncpy(t->alias, alias, sizeof(t->alias));
     if (ma_sound_init_from_file(
@@ -60,11 +60,12 @@ static void audio_load(const char *alias, const char *filename) {
             &t->sound
         ) != MA_SUCCESS) {
         fprintf(stderr, "Falha ao carregar som: %s\n", filename);
-        return;
+        return 0;
     }
     // Volume padrão 100%
     t->volume = 100.0f;
     ma_sound_set_volume(&t->sound, t->volume / 100.0f);
+    return 1;
 }
 
 /**
@@ -196,6 +197,7 @@ static void audio_fade_in(const char *alias, uint32_t duration_ms, float from_vo
  * @param from_volume   Volume inicial (0.0 a 100.0).
  * @param to_volume     Volume final (0.0 a 100.0).
  */
+/*
 static void audio_fade_out(const char *alias, uint32_t duration_ms, float from_volume, float to_volume) {
     FadeTask *task = (FadeTask*)malloc(sizeof(FadeTask));
     strncpy(task->alias, alias, sizeof(task->alias));
@@ -206,6 +208,7 @@ static void audio_fade_out(const char *alias, uint32_t duration_ms, float from_v
     async_thread_t th = async_run(fade_thread, task);
     async_detach(th);
 }
+*/
 
 /**
  * @brief Descarrega todas as faixas e finaliza o engine de áudio.
