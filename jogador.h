@@ -10,13 +10,15 @@ typedef struct{
     int quantidade;
 } quant_bur;
 
-#define QTD_ING_INICIAL 4
+#define QTD_ING_INICIAL 6
 typedef struct {
     float dinheiro;
     int dia_atual;
     quant_bur itens_vendidos[10];
+    quant_bur ing_vendidos[13];
     Arvore estoque;
 } Jogador;
+
 void inicializa_estoque(Jogador **j){
 	(*j)->estoque=inicializa_arvore();
 	inserir(&(*j)->estoque,(tp_item_arvore){7,QTD_ING_INICIAL});
@@ -48,6 +50,8 @@ Jogador* inicializa_jogador (int dinheiro_inicial)
         j->itens_vendidos[i].id = i;
         j->itens_vendidos[i].quantidade = 0;
     };
+
+    for (int i = 0; i < 13; i++) j->ing_vendidos[i] = (quant_bur){i, 0};
 
     return j;
 }

@@ -17,7 +17,6 @@
 // Sorteia qtd pedidos do cardápio e, após todos os sorteios, mostra na tela os pedidos para memorização do jogador
 int qtd_clientes (int qtd_dias)
 {
-    
     #ifdef INDEVMODE
         return qtd_dias;
     #else
@@ -39,7 +38,7 @@ int inicio_de_dia (Jogador* jog, Cardapio* c)
     print_rgb_txt(NULL, COLOR_VERDE, VETOR_NULO, "Os pedidos já foram escolhidos!\nPrepare sua memória, pois só serão mostrados uma vez!\n");
     ler_teclado();
     print_rgb_txt(NULL, COLOR_AMARELO, nv2(-1, -1), "Digite qualquer coisa quando estiver pronto!\n");
-    getchar();
+    getchar(); getchar();
     system("cls");
     printf("\n");
     srand(time(NULL));
@@ -87,7 +86,7 @@ void tela_inicial ()
     render(tela_inicio, true);
     
     print_rgb_txt(NULL, COLOR_AMARELO, nv2(-1, -1), "Pressione ENTER para começar a jogar!...\n");
-    getchar();
+    getchar(); getchar();
 
     esconder_objeto(tela_inicio, fundo);
     excluir_objeto(fundo);
@@ -96,24 +95,42 @@ void tela_inicial ()
     tela_inicio = NULL;
 }
 
-// Organiza o fim do jogo e mostra as estatísticas finais
-void fim_de_jogo(Cardapio* cardapio, Jogador* jog, Screen* tela_go, Obj objetos[], int qtd_objetos)
+void print_estatisticas(Cardapio* cardapio, Jogador* jog)
 {
-    audio_stop("end");
-    audio_play("ding", false);
     mergeSort(jog->itens_vendidos,0,9);
+    mergeSort(jog->ing_vendidos, 0, 12);
     printf("Estatísticas:\n");
+    printf("Hambúrgueres vendidos:\n");
     for(int i=0;i<10;i++){
         printf(
-               "Hamburguer: %s\n  -> Quantidade vendida: %d\n\n", 
+               "  Hamburguer: %s\n    -> Quantidade vendida: %d\n\n", 
                 cardapio->hamburgueres[jog->itens_vendidos[i].id]->nome, 
                 jog->itens_vendidos[i].quantidade
         );
     }
 
+    printf("Ingredientes utilizados:\n");
+    for (int i = 0; i < 13; i++)
+    {
+        printf(
+            "  Ingrediente: %s\n    -> Quantidade utilizada: %d\n\n",
+            cardapio->ingredientes[jog->ing_vendidos[i].id].nome,
+            jog->ing_vendidos[i].quantidade
+        );
+    }
+}
+
+// Organiza o fim do jogo e mostra as estatísticas finais
+void fim_de_jogo(Cardapio* cardapio, Jogador* jog, Screen* tela_go, Obj objetos[], int qtd_objetos)
+{
+    audio_stop("end");
+    audio_play("ding", false);
+    
+    print_estatisticas(cardapio, jog);
+
     printf("Obrigado por jogar!\n");
     print_rgb_txt(NULL, COLOR_VERMELHO, nv2(-1, -1), "Pressione ENTER para encerrar...\n");
-    getchar();
+    getchar(); getchar();
     if (qtd_objetos > 0)
     {
         for (int i = 0; i < qtd_objetos; i++)
@@ -135,10 +152,10 @@ void tela_gameOver (Cardapio* cd, Jogador* jog)
     audio_stop("tema2");
     audio_play("tururu", false);
     audio_play("end", false);
-    Screen* s = criar_tela(nv2(131, 30), COLOR_PRETO, 0);
+    Screen* s = criar_tela(nv2(GAME_OVER_FRAME_WIDTH, GAME_OVER_FRAME_HEIGHT), COLOR_PRETO, 0);
     Obj fundo = criar_piskel_obj(game_over_data[0], GAME_OVER_FRAME_WIDTH, GAME_OVER_FRAME_HEIGHT);
     centralizar_objeto(fundo);
-    desenhar_objeto(s, fundo);
+    mover_objeto(s, fundo, VETOR_CIMA);
 
     Obj game = criar_objeto_de_texto(1, 3, "GAME");
     somar_cor_obj(game, COLOR_VERMELHO);
@@ -150,7 +167,7 @@ void tela_gameOver (Cardapio* cd, Jogador* jog)
 
     render(s, true);
     print_rgb_txt(NULL, COLOR_AMARELO, nv2(-1, -1), "Pressione ENTER para ver as estatísticas finais.\n");
-    getchar();
+    getchar(); getchar();
     Obj objetos[] = {fundo, game, over};
     fim_de_jogo(cd, jog, s, objetos, 3);
 }
@@ -198,12 +215,14 @@ bool load_audio ()
     audio_set_volume("tema2", 20.0f);
     audio_set_volume("punch", 80.0f);
     audio_set_volume("tururu", 80.0f);
+    audio_set_volume("ding", 80.0f);
     return true;
 }
 
 int main ()
 {
     setlocale(LC_CTYPE, "pt_BR.UTF-8");
+    system("cls");
     if (load_audio() == false) return 0;
     tela_inicial();
 
@@ -249,6 +268,8 @@ int main ()
         if(inicializa_player_save(din_inicial)==0) return 0;
     #else
         printf("Build sem arquivo externo. Verifique se sua maquina aceita e, se sim, execute a versão alternativa.\n");
+        print_rgb_txt(NULL, COLOR_AMARELO, nv2(-1, -1), "Pressione ENTER para seguir assim mesmo...\n");
+        getchar(); getchar();
     #endif
 
     while (true)

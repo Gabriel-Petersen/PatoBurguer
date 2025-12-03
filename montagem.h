@@ -366,6 +366,17 @@ void trocar_ingrediente (Screen* main_tela, Obj* hamburguer, const Vector2 prato
     teleportar_objeto(main_tela, *hamburguer, prato_pos);
 }
 
+void primeira_checagem(bool* pode_iniciar, Jogador* jog)
+{
+    Nodo* n = busca(jog->estoque, (tp_item_arvore){1, 0});
+    if (n == NULL)
+        *pode_iniciar = false;
+    else if (n->info.qtd <= 0)
+        *pode_iniciar = false;
+    else
+        n->info.qtd--;
+}
+
 /*
     Organiza toda a etapa de montagem, lendo e esvaziando a fila de pedidos a medida que o player vai cozinhando
     Retorna true se o jogo correu bem
@@ -374,6 +385,7 @@ void trocar_ingrediente (Screen* main_tela, Obj* hamburguer, const Vector2 prato
 */
 bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int* qtd_hamburgueres)
 {
+    bool pode_iniciar = true;
     troca_tema_com_fade("tema1");
     *qtd_hamburgueres = 0;
     moveCursor(VETOR_NULO);
@@ -386,7 +398,7 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
     bool no_cardapio = false;
     int pagina = 0;
     int pagina_antiga = -1;
-    Obj t1 = NULL, t2 = NULL; // Inicializados para evitar lixo de memória na primeira checagem
+    Obj t1 = NULL, t2 = NULL;
 
     int hamb_id;
     front(fila_de_pedidos, &hamb_id);
@@ -399,7 +411,9 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
     alterar_pivot_obj(hamburguer, nv2(0, hamburguer->size.y/2));
     teleportar_objeto(cenario.main_tela, hamburguer, prato_pos);
 
-    while (fila_vazia(fila_de_pedidos) == false)
+    primeira_checagem(&pode_iniciar, jog);
+
+    while (fila_vazia(fila_de_pedidos) == false && pode_iniciar == true)
     {
         render_com_texto(atual, no_cardapio, jog->estoque);
         mostrar_controles(atual);
@@ -408,6 +422,8 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
         #ifdef INDEVMODE
             if (input == 'T') break;
         #endif
+
+        
 
         if (input == 'M')  // Envia o ingrediente ao cliente
         {
@@ -436,6 +452,8 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
             dequeue(fila_de_pedidos, &hamb_id);
             if (front(fila_de_pedidos, &hamb_id))
                 pedido_atual = c->hamburgueres[hamb_id];
+            else
+                pedido_atual = NULL;
             
             if (pedido_atual != NULL) // Se ainda tem pedidos a fazer
             {
@@ -467,6 +485,7 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
             Nodo *n=busca(jog->estoque,(tp_item_arvore){id_ingrediente,0});
             if(n->info.qtd==0)break;
             n->info.qtd--;
+            jog->ing_vendidos[id_ingrediente].quantidade++;
 
             if (id_ingrediente == 7 || id_ingrediente == 8) // se é um molho
             {
@@ -535,7 +554,7 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
 
     bool result = fila_vazia(fila_de_pedidos);
     if (result)
-        printf("Parabéns! Você entregou todos os pedidos!\n");
+        printf("\nParabéns! Você entregou todos os pedidos!\n");
     else
         if (jog->dinheiro < 0)
             printf("É uma pena... Você ficou no vermelho. Não tem dinheiro para pagar Sanval pelo alvará da loja e nem para pagar a Soussa os direitos autorais pelas receitas.\n");
@@ -543,7 +562,7 @@ bool etapa_de_montagem (Fila_D* fila_de_pedidos, Cardapio* c, Jogador* jog, int*
             printf("É uma pena... Você não tem mais ingredientes para continuar.\n");
     
     print_rgb_txt(NULL, COLOR_AMARELO, nv2(-1, -1), "Pressione ENTER para continuar!\n");
-    getchar();
+    getchar(); getchar();
     
     if (t1 != NULL) {esconder_objeto(cenario.cd_tela, t1); excluir_objeto(t1);}
     if (t2 != NULL) {esconder_objeto(cenario.cd_tela, t2); excluir_objeto(t2);}

@@ -90,11 +90,16 @@ typedef struct{
     Obj fundo_loja;
 }CenarioLoja;
 
-void limpar_area(Vector2 pos, int largura)
+void limpar_area(Screen* s, Vector2 pos, int largura)
 {
     moveCursor(pos);
     for (int i = 0; i < largura; i++)
+	{
         putchar(' ');
+		s->buffer[pos.y][pos.x + i] = COR_NULA;
+	}
+	moveCursor(nv2(0, s->screen_size.y+4));
+	for (int i = 0; i < s->screen_size.x; i++) putchar(' ');
 }
 
 /*
@@ -112,7 +117,7 @@ void iniciar_loja(Jogador *J){
 	printf("Aqui você pode comprar e vender ingredientes. Fique atento à sua quantidade de moedas, pois se elas acabarem você perde o jogo.\n");
 	printf("Boas compras!\n");
 	print_rgb_txt(NULL, COLOR_AMARELO, nv2(-1, -1), "Pressione ENTER para continuar\n");
-	getchar();
+	getchar(); getchar();
 	Lista_DE *I=criar_lista_de_ingredientes();
 	NodoLista *p=I->ini;
 	teleportar_objeto(cenario.main_tela,p->ant->info.obj,nv2(-27,0));
@@ -151,7 +156,7 @@ void iniciar_loja(Jogador *J){
 			case 'D':
 			case 'A':
 				audio_play("woosh", false);
-				limpar_area(nv2(54, 19), 24);
+				limpar_area(cenario.main_tela, nv2(54, 19), 24);
 				esconder_objeto(cenario.main_tela,p->ant->info.obj);
 				esconder_objeto(cenario.main_tela,p->info.obj);
 				esconder_objeto(cenario.main_tela,p->prox->info.obj);
@@ -173,7 +178,7 @@ void iniciar_loja(Jogador *J){
 				break;
 			case 'C':
 				if(J->dinheiro>=p->info.ing.valor){
-					limpar_area(nv2(54, 19), 24);
+					limpar_area(cenario.main_tela, nv2(54, 19), 24);
 					audio_play("cash", false);
 					J->dinheiro-=p->info.ing.valor;
 					tp_item_arvore item;
@@ -181,14 +186,15 @@ void iniciar_loja(Jogador *J){
 					Nodo *n=busca(J->estoque,item);
 					n->info.qtd++;
 				}
-				else printf("\nDinheiro insuficiente");
+				else
+					print_rgb_txt(NULL, COLOR_VERMELHO, nv2(0, cenario.main_tela->screen_size.y+4), "Dinheiro insuficiente!");
 				break;
 			case 'V':
 				tp_item_arvore item;
 				item.ing_id=p->info.ing.id;
 				Nodo *n=busca(J->estoque,item);
 				if(n->info.qtd==0)break;
-				limpar_area(nv2(54, 19), 25);
+				limpar_area(cenario.main_tela, nv2(54, 19), 24);
 				audio_play("cash", false);
 				J->dinheiro+=p->info.ing.valor;
 				n->info.qtd--;

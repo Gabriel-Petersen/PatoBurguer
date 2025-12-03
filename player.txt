@@ -1,0 +1,8 @@
+Dia 0
+Dinheiro 10.00$
+Hambúgueres: 0
+------------------------
+Dia 1
+Dinheiro 10.00$
+Hambúgueres: 1
+------------------------
